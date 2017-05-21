@@ -29,13 +29,13 @@ import os, sys, time, math, cv2, struct, fcntl
 from datetime import datetime
 
 # Module Dependent Headers
-import requests, json, socket, StringIO
+import requests, json, socket, io
 import xml.etree.ElementTree as ET
-import urllib
-from sc_ExifWriter import ExifWriter
+import urllib.request, urllib.parse, urllib.error
+from .sc_ExifWriter import ExifWriter
 
 # Own Headers
-import ssdp
+from . import ssdp
 
 #****************************************************************************
 # Constants
@@ -109,7 +109,7 @@ class SmartCamera_SonyQX():
         # Look Camera and Get URL
         self.sCameraURL = self.__sFindCameraURL(sNetInterface)
         if self.sCameraURL is None:
-            print("No QX camera found, failed to open QX camera %d" % self.u8Instance)
+            print(("No QX camera found, failed to open QX camera %d" % self.u8Instance))
         else:
             self.__openGeoTagLogFile()      # open geoTag Log
             self.boCameraInitialSetup()     # Setup Initial camera parameters
@@ -165,13 +165,13 @@ class SmartCamera_SonyQX():
 
         # Set Postview Size to Orignial size to get real image filename
         sResponse = self.__sSimpleCall("getSupportedPostviewImageSize")
-        print("%s" % sResponse)
+        print(("%s" % sResponse))
 
         sResponse = self.__sSimpleCall("setPostviewImageSize", adictParams=["Original"])
-        print("%s" % sResponse)
+        print(("%s" % sResponse))
 
         sResponse = self.__sSimpleCall("getPostviewImageSize")
-        print("%s" % sResponse)
+        print(("%s" % sResponse))
 
         # Set Mode to Shutter Priority if available
         SupportedModes = self.__sSimpleCall("getSupportedExposureMode")
@@ -333,7 +333,7 @@ class SmartCamera_SonyQX():
         self.geoRef_writer = open('/sdcard/log/geoRef%s.log' % i, 'w', 0)
         self.geoRef_writer.write('Filename, Latitude, Longitude, Alt (AMSL), Roll, Pitch, Yaw\n')
 
-        print('Opened GeoTag Log File with Filename: geoRef%s.log' % i)
+        print(('Opened GeoTag Log File with Filename: geoRef%s.log' % i))
         
         #Open URL Log File
         i = 0
@@ -344,7 +344,7 @@ class SmartCamera_SonyQX():
         self.sCurrentURLLogFilename = '/sdcard/log/urlLog%s.log' % i
         self.urlLog_writer = open('/sdcard/log/urlLog%s.log' % i, 'w', 0)
 
-        print('Opened URL Log File with Filename: urlLog%s.log' % i)
+        print(('Opened URL Log File with Filename: urlLog%s.log' % i))
 
 #****************************************************************************
 #   Method Name     : __sFindInterfaceIPAddress
@@ -409,7 +409,7 @@ class SmartCamera_SonyQX():
 #****************************************************************************
 
     def __sSimpleCall(self, sMethod, sTarget="camera", adictParams=[], u8Id=1, sVersion="1.0"):
-        print("Calling %s" % sMethod)
+        print(("Calling %s" % sMethod))
         return self.__sMakeCall(sTarget,
                               { "method" : sMethod,
                               "params" : adictParams,
@@ -434,19 +434,19 @@ class SmartCamera_SonyQX():
     def __sFindCameraURL(self, sInterface):
         sSSDPString = "urn:schemas-sony-com:service:ScalarWebAPI:1";
         sInterfaceIP = self.__sFindInterfaceIPAddress(sInterface)
-        print ("Interface IP Address: %s" % sInterfaceIP)
+        print(("Interface IP Address: %s" % sInterfaceIP))
         sRet = ssdp.discover(sSSDPString, if_ip=sInterfaceIP)
         if len(sRet) == 0:
             return None
         sDMS_URL = sRet[0].location
 
-        print("Fetching DMS from %s" % sDMS_URL)
+        print(("Fetching DMS from %s" % sDMS_URL))
         xmlReq = requests.request('GET', sDMS_URL)
 
-        xmlTree = ET.ElementTree(file=StringIO.StringIO(xmlReq.content))
+        xmlTree = ET.ElementTree(file=io.StringIO(xmlReq.content))
         for xmlElem in xmlTree.iter():
             if xmlElem.tag == '{urn:schemas-sony-com:av}X_ScalarWebAPI_ActionList_URL':
-                print("Found camera at %s" % xmlElem.text)
+                print(("Found camera at %s" % xmlElem.text))
                 return xmlElem.text
         return None
 
@@ -467,7 +467,7 @@ class SmartCamera_SonyQX():
 #****************************************************************************
 
     def boValidCameraFound(self):
-        print ("Checking URL at %s" % self.sCameraURL)
+        print(("Checking URL at %s" % self.sCameraURL))
         if self.sCameraURL is None:
             return False
 
@@ -491,7 +491,7 @@ class SmartCamera_SonyQX():
 
     def boGetLatestImage(self):
         self.sLatestImageFilename = '%s_image_%s.jpg' % (self.sConfigGroup,self.u32ImgCounter)
-        print ("Downloading, ",self.sLatestImageFilename)
+        print(("Downloading, ",self.sLatestImageFilename))
         imgReq = requests.request('GET', self.sLatestImageURL)
         if imgReq is not None:
             open(self.sLatestImageFilename, 'w').write(imgReq.content)
@@ -525,7 +525,7 @@ class SmartCamera_SonyQX():
             start = self.sLatestImageURL.find('DSC')
             end = self.sLatestImageURL.find('JPG', start) + 3
             filename = url[start:end]
-            print("Downloading %s" % filename)
+            print(("Downloading %s" % filename))
 
             geotagFile = open(self.sCurrentGeoRefFilename, "r")
             for line in geotagFile:
@@ -533,7 +533,7 @@ class SmartCamera_SonyQX():
                     currFileLatitude = float(line.split(',')[1])
                     currFileLongitude = float(line.split(',')[2])
                     currFileAltitude = float(line.split(',')[3])
-                    print ("%s,%f,%f,%f" % (filename, currFileLatitude, currFileLongitude, currFileAltitude))
+                    print(("%s,%f,%f,%f" % (filename, currFileLatitude, currFileLongitude, currFileAltitude)))
             geotagFile.close()
             
             try:
@@ -543,7 +543,7 @@ class SmartCamera_SonyQX():
             except Exception as ex:
                 template = "An exception of type {0} occurred. Arguments:\n{1!r}"
                 message = template.format(type(ex).__name__, ex.args)
-                print message
+                print(message)
             
         file.close()
 
@@ -663,10 +663,10 @@ class SmartCamera_SonyQX():
             sResponse = self.__sSimpleCall("getExposureMode")
 
             if sExposureMode not in sResponse["result"]:
-                print ("Failed to set Exposure Mode, current value: %s" %sResponse["result"])
+                print(("Failed to set Exposure Mode, current value: %s" %sResponse["result"]))
                 return False
 
-            print ("Exposure Mode set to %s" % sExposureMode)
+            print(("Exposure Mode set to %s" % sExposureMode))
             return True
 
         # In case of an error, return false
@@ -702,10 +702,10 @@ class SmartCamera_SonyQX():
             sResponse = self.__sSimpleCall("getShutterSpeed")
 
             if sShutterSpeed not in sResponse["result"]:
-                print ("Failed to set Shutter Speed, current value: %s" %sResponse["result"])
+                print(("Failed to set Shutter Speed, current value: %s" %sResponse["result"]))
                 return False
 
-            print ("Shutter Speed set to %s" % sShutterSpeed)
+            print(("Shutter Speed set to %s" % sShutterSpeed))
             return True
 
         # In case of an error, return false
@@ -741,10 +741,10 @@ class SmartCamera_SonyQX():
             sResponse = self.__sSimpleCall("getFNumber")
 
             if sFValue not in sResponse["result"]:
-                print ("Failed to set aperture, current value: %s" %sResponse["result"])
+                print(("Failed to set aperture, current value: %s" %sResponse["result"]))
                 return False
 
-            print ("Aperture set to %s" % sFValue)
+            print(("Aperture set to %s" % sFValue))
             return True
 
         # In case of an error, return false
@@ -778,10 +778,10 @@ class SmartCamera_SonyQX():
             sResponse = self.__sSimpleCall("getIsoSpeedRate")
 
             if sISO not in sResponse["result"]:
-                print ("Failed to Set ISO, current value: %s" %sResponse["result"])
+                print(("Failed to Set ISO, current value: %s" %sResponse["result"]))
                 return False
 
-            print ("ISO set to %s" % sISO)
+            print(("ISO set to %s" % sISO))
             return True
 
         # In case of an error, return false
@@ -832,8 +832,8 @@ class SmartCamera_SonyQX():
             start = self.sLatestImageURL.find('DSC')
             end = self.sLatestImageURL.find('JPG', start) + 3
             self.sLatestFileName = self.sLatestImageURL[start:end]
-            print("image URL: %s" % self.sLatestImageURL)
-            print("image Name: %s" % self.sLatestFileName)
+            print(("image URL: %s" % self.sLatestImageURL))
+            print(("image Name: %s" % self.sLatestFileName))
             self.__boAddGeotagToLog(self.sLatestFileName)
             self.__boWriteURLToLog(self.sLatestImageURL)
 
@@ -867,7 +867,7 @@ class SmartCamera_SonyQX():
                 # display image
                 cv2.imshow ('image_display', self.get_latest_image())
             else:
-                print "no image"
+                print("no image")
 
             # check for ESC key being pressed
             k = cv2.waitKey(5) & 0xFF

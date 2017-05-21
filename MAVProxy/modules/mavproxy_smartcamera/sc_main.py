@@ -3,10 +3,10 @@ import math
 import cv2
 from pymavlink import mavutil
 from droneapi.lib import VehicleMode, Location
-import sc_config
-from sc_video import sc_video
-from sc_webcam import SmartCameraWebCam
-from sc_SonyQX1 import SmartCamera_SonyQX
+from . import sc_config
+from .sc_video import sc_video
+from .sc_webcam import SmartCameraWebCam
+from .sc_SonyQX1 import SmartCamera_SonyQX
 
 """
 sc_main.py - runs top level smart camera function
@@ -76,7 +76,7 @@ class SmartCamera(object):
                     print("Found QX Camera")
 
         # display number of cameras found
-        print ("cameras found: %d" % len(self.camera_list))
+        print(("cameras found: %d" % len(self.camera_list)))
 
     # fetch_mission - fetch mission from flight controller
     def fetch_mission(self):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 
 '''firmware handling'''
 
@@ -76,7 +76,7 @@ fw download releasetype=OFFICIAL frame=quad platform=PX4-v2
             "Rover": "GROUND_ROVER",
             "PX4IO": "ARDUPILOT_PX4IO",
         }
-        mavlink_to_frame_dict = { v : k  for k,v in frame_to_mavlink_dict.items() }
+        mavlink_to_frame_dict = { v : k  for k,v in list(frame_to_mavlink_dict.items()) }
         x = firmware["mav-type"]
         if firmware["mav-autopilot"] != "ARDUPILOTMEGA":
             return x
@@ -310,12 +310,12 @@ fw download releasetype=OFFICIAL frame=quad platform=PX4-v2
         '''called rapidly by mavproxy'''
         if self.downloaders_lock.acquire(False):
             removed_one = False
-            for url in self.downloaders.keys():
+            for url in list(self.downloaders.keys()):
                 if not self.downloaders[url].is_alive():
                     print("fw: Download thread for (%s) done" % url)
                     del self.downloaders[url]
                     removed_one = True
-            if removed_one and not self.downloaders.keys():
+            if removed_one and not list(self.downloaders.keys()):
                 # all downloads finished - parse them
                 self.manifests_parse()
 

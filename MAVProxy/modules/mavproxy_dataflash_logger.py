@@ -50,9 +50,9 @@ class dataflash_logger(mp_module.MPModule):
     def cmd_dataflash_logger(self, args):
         '''control behaviour of the module'''
         if len(args) == 0:
-            print self.usage()
+            print(self.usage())
         elif args[0] == "status":
-            print self.status()
+            print(self.status())
         elif args[0] == "stop":
             self.sender = None
             self.stopped = True
@@ -61,7 +61,7 @@ class dataflash_logger(mp_module.MPModule):
         elif args[0] == "set":
             self.log_settings.command(args[1:])
         else:
-            print self.usage()
+            print(self.usage())
 
     def _dataflash_dir(self, mpstate):
         '''returns directory path to store DF logs in.  May be relative'''
@@ -74,9 +74,9 @@ class dataflash_logger(mp_module.MPModule):
             os.makedirs(ret)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                print("DFLogger: OSError making (%s): %s" % (ret, str(e)))
+                print(("DFLogger: OSError making (%s): %s" % (ret, str(e))))
         except Exception as e:
-            print("DFLogger: Unknown exception making (%s): %s" % (ret, str(e)))
+            print(("DFLogger: Unknown exception making (%s): %s" % (ret, str(e))))
 
         return ret
 
@@ -102,7 +102,7 @@ class dataflash_logger(mp_module.MPModule):
 
         self.last_seqno = 0
         self.logfile = open(filename, 'w+b')
-        print("DFLogger: logging started (%s)" % (filename))
+        print(("DFLogger: logging started (%s)" % (filename)))
         self.prev_cnt = 0
         self.download = 0
         self.prev_download = 0
@@ -135,7 +135,7 @@ class dataflash_logger(mp_module.MPModule):
         '''print out statistics every 10 seconds from idle loop'''
         now = time.time()
         if (now - self.last_idle_status_printed_time) >= 10:
-            print self.status()
+            print(self.status())
             self.last_idle_status_printed_time = now
             self.prev_download = self.download
 
@@ -172,7 +172,7 @@ class dataflash_logger(mp_module.MPModule):
             # number (or after 60 seconds):
             if (self.last_seqno - block > 200) or (now - first_sent > 60):
                 if self.log_settings.verbose:
-                    print("DFLogger: Abandoning block (%d)" % (block,))
+                    print(("DFLogger: Abandoning block (%d)" % (block,)))
                 del self.blocks_to_ack_and_nack[i]
                 del self.missing_blocks[block]
                 self.abandoned += 1
@@ -185,7 +185,7 @@ class dataflash_logger(mp_module.MPModule):
                     continue
 
             if self.log_settings.verbose:
-                print("DFLogger: Asking for block (%d)" % (block,))
+                print(("DFLogger: Asking for block (%d)" % (block,)))
             mavstatus = mavutil.mavlink.MAV_REMOTE_LOG_DATA_BLOCK_NACK
             (target_sys,target_comp) = self.sender
             self.master.mav.remote_log_block_status_send(target_sys,
@@ -286,7 +286,7 @@ class dataflash_logger(mp_module.MPModule):
 
                 if m.seqno in self.missing_blocks:
                     if self.log_settings.verbose:
-                        print("DFLogger: Received missing block: %d" % (m.seqno,))
+                        print(("DFLogger: Received missing block: %d" % (m.seqno,)))
                     del self.missing_blocks[m.seqno]
                     self.missing_found += 1
                     self.blocks_to_ack_and_nack.append([self.master,m.seqno,1,now,None])
@@ -309,7 +309,7 @@ class dataflash_logger(mp_module.MPModule):
                                    block not in self.acking_blocks:
                                     self.missing_blocks[block] = 1
                                     if self.log_settings.verbose:
-                                        print "DFLogger: setting %d for nacking" % (block,)
+                                        print("DFLogger: setting %d for nacking" % (block,))
                                     self.blocks_to_ack_and_nack.append([self.master,block,0,now,None])
                         #print "\nmissed blocks: ",self.missing_blocks
                     if self.last_seqno < m.seqno:

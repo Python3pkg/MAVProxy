@@ -27,7 +27,7 @@ class CmdlongModule(mp_module.MPModule):
 
     def cmd_long_commands(self):
         atts = dir(mavutil.mavlink)
-        atts = filter( lambda x : x.lower().startswith("mav_cmd"), atts)
+        atts = [x for x in atts if x.lower().startswith("mav_cmd")]
         ret = []
         for att in atts:
             ret.append(att)
@@ -166,7 +166,7 @@ class CmdlongModule(mp_module.MPModule):
 
         if (len(args) == 1):
             speed = float(args[0])
-            print("SPEED %s" % (str(speed)))
+            print(("SPEED %s" % (str(speed))))
             self.master.mav.command_long_send(
                 self.settings.target_system,  # target_system
                 mavutil.mavlink.MAV_COMP_ID_SYSTEM_CONTROL, # target_component
@@ -190,7 +190,7 @@ class CmdlongModule(mp_module.MPModule):
             angle = float(args[0])
             angular_speed = float(args[1])
             angle_mode = float(args[2])
-            print("ANGLE %s" % (str(angle)))
+            print(("ANGLE %s" % (str(angle))))
             self.master.mav.command_long_send(
                 self.settings.target_system,  # target_system
                 mavutil.mavlink.MAV_COMP_ID_SYSTEM_CONTROL, # target_component
@@ -214,7 +214,7 @@ class CmdlongModule(mp_module.MPModule):
             x_mps = float(args[0])
             y_mps = float(args[1])
             z_mps = float(args[2])
-            print("x:%f, y:%f, z:%f" % (x_mps, y_mps, z_mps))
+            print(("x:%f, y:%f, z:%f" % (x_mps, y_mps, z_mps)))
             self.master.mav.set_position_target_local_ned_send(
                                       0,  # system time in milliseconds
                                       1,  # target system
@@ -236,7 +236,7 @@ class CmdlongModule(mp_module.MPModule):
             x_m = float(args[0])
             y_m = float(args[1])
             z_m = float(args[2])
-            print("x:%f, y:%f, z:%f" % (x_m, y_m, z_m))
+            print(("x:%f, y:%f, z:%f" % (x_m, y_m, z_m)))
             self.master.mav.set_position_target_local_ned_send(
                                       0,  # system time in milliseconds
                                       1,  # target system
@@ -261,7 +261,7 @@ class CmdlongModule(mp_module.MPModule):
             q3 = float(args[3])
             thrust = float(args[4])
             att_target = [q0, q1, q2, q3]
-            print("q0:%.3f, q1:%.3f, q2:%.3f q3:%.3f thrust:%.2f" % (q0, q1, q2, q3, thrust))
+            print(("q0:%.3f, q1:%.3f, q2:%.3f q3:%.3f thrust:%.2f" % (q0, q1, q2, q3, thrust)))
             self.master.mav.set_attitude_target_send(
                                       0,  # system time in milliseconds
                                       1,  # target system
@@ -282,11 +282,11 @@ class CmdlongModule(mp_module.MPModule):
         except Exception:
             pass
         if latlon is None:
-            print "set latlon to zeros"
+            print("set latlon to zeros")
             latlon = [0, 0]
         else:
             ignoremask = ignoremask & 504
-            print "found latlon", ignoremask
+            print("found latlon", ignoremask)
         vN = 0
         vE = 0
         vD = 0
@@ -296,8 +296,8 @@ class CmdlongModule(mp_module.MPModule):
             vD = float(args[2])
             ignoremask = ignoremask & 455
 
-        print "ignoremask",ignoremask
-        print latlon
+        print("ignoremask",ignoremask)
+        print(latlon)
         self.master.mav.set_position_target_global_int_send(
             0,  # system time in ms
             1,  # target system
@@ -329,7 +329,7 @@ class CmdlongModule(mp_module.MPModule):
                     pass
 
         if command is None:
-            print("Unknown command long ({0})".format(args[0]))
+            print(("Unknown command long ({0})".format(args[0])))
             return
 
         floating_args = [ float(x) for x in args[1:] ]

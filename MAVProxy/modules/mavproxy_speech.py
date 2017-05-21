@@ -22,7 +22,7 @@ class SpeechModule(mp_module.MPModule):
             try:
                 backend("")
                 self.say_backend = backend
-                print("Using speech backend '%s'" % backend_name)
+                print(("Using speech backend '%s'" % backend_name))
                 return
             except Exception:
                 pass
@@ -40,7 +40,7 @@ class SpeechModule(mp_module.MPModule):
                 import signal
                 pid = int(open(pidpath).read())
                 if pid > 1 and os.kill(pid, 0) is None:
-                    print("Killing speech dispatcher pid %u" % pid)
+                    print(("Killing speech dispatcher pid %u" % pid))
                     os.kill(pid, signal.SIGINT)
                     time.sleep(1)
             except Exception as e:

@@ -73,10 +73,10 @@ class GasHeliModule(mp_module.MPModule):
     def valid_starter_settings(self):
         '''check starter settings'''
         if self.gasheli_settings.ignition_chan <= 0 or self.gasheli_settings.ignition_chan > 8:
-            print("Invalid ignition channel %d" % self.gasheli_settings.ignition_chan)
+            print(("Invalid ignition channel %d" % self.gasheli_settings.ignition_chan))
             return False
         if self.gasheli_settings.starter_chan <= 0 or self.gasheli_settings.starter_chan > 14:
-            print("Invalid starter channel %d" % self.gasheli_settings.starter_chan)
+            print(("Invalid starter channel %d" % self.gasheli_settings.starter_chan))
             return False
         return True
 

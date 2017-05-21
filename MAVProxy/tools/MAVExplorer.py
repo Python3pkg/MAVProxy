@@ -6,7 +6,7 @@ Andrew Tridgell December 2014
 
 import sys, struct, time, os, datetime, platform
 import math, re
-import Queue
+import queue
 import fnmatch
 import threading
 if platform.system() == 'Darwin':
@@ -41,7 +41,7 @@ class MEStatus(object):
 class MEState(object):
     '''holds state of MAVExplorer'''
     def __init__(self):
-        self.input_queue = Queue.Queue()
+        self.input_queue = queue.Queue()
         self.rl = None
         self.console = wxconsole.MessageConsole(title='MAVExplorer')
         self.exit = False
@@ -126,15 +126,15 @@ def menu_callback(m):
         idx = int(m.returnkey[5:])
         mestate.flightmode_selections[idx] = m.IsChecked()
     elif m.returnkey.startswith("loadLog"):
-        print "File: " + m.returnkey[8:]
+        print("File: " + m.returnkey[8:])
     elif m.returnkey == 'quit':
         mestate.console.close()
         mestate.exit = True
-        print "Exited. Press Enter to continue."
+        print("Exited. Press Enter to continue.")
         sys.exit(0)
 
     else:
-        print('Unknown menu selection: %s' % m.returnkey)
+        print(('Unknown menu selection: %s' % m.returnkey))
 
 
 def flightmode_menu():
@@ -310,7 +310,7 @@ def cmd_set(args):
 def cmd_condition(args):
     '''control MAVExporer conditions'''
     if len(args) == 0:
-        print("condition is: %s" % mestate.settings.condition)
+        print(("condition is: %s" % mestate.settings.condition))
         return
     mestate.settings.condition = ' '.join(args)
     if len(mestate.settings.condition) == 0 or mestate.settings.condition == 'clear':
@@ -423,12 +423,12 @@ def cmd_param(args):
     k = sorted(mestate.mlog.params.keys())
     for p in k:
         if fnmatch.fnmatch(str(p).upper(), wildcard.upper()):
-            print("%-16.16s %f" % (str(p), mestate.mlog.params[p]))
+            print(("%-16.16s %f" % (str(p), mestate.mlog.params[p])))
 
 def cmd_loadfile(args):
     '''callback from menu to load a log file'''
     if len(args) != 1:
-        print "Error loading file"
+        print("Error loading file")
         return
     loadfile(args[0])
 
@@ -458,31 +458,31 @@ def process_stdin(line):
     args = line.split()
     cmd = args[0]
     if cmd == 'help':
-        k = command_map.keys()
+        k = list(command_map.keys())
         k.sort()
         for cmd in k:
             (fn, help) = command_map[cmd]
-            print("%-15s : %s" % (cmd, help))
+            print(("%-15s : %s" % (cmd, help)))
         return
     if cmd == 'exit':
         mestate.exit = True
         return
 
     if not cmd in command_map:
-        print("Unknown command '%s'" % line)
+        print(("Unknown command '%s'" % line))
         return
     (fn, help) = command_map[cmd]
     try:
         fn(args[1:])
     except Exception as e:
-        print("ERROR in command %s: %s" % (args[1:], str(e)))
+        print(("ERROR in command %s: %s" % (args[1:], str(e))))
 
 def input_loop():
     '''wait for user input'''
     while mestate.exit != True:
         try:
             if mestate.exit != True:
-                line = raw_input(mestate.rl.prompt)
+                line = input(mestate.rl.prompt)
         except EOFError:
             mestate.exit = True
             sys.exit(1)
@@ -540,7 +540,7 @@ if __name__ == "__main__":
     while mestate.rl != None and mestate.exit != True:
         try:
             try:
-                line = raw_input(mestate.rl.prompt)
+                line = input(mestate.rl.prompt)
             except EOFError:
                 mestate.exit = True
                 break

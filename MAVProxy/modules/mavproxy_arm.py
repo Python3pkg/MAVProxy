@@ -25,7 +25,7 @@ arming_masks = {
 class ArmModule(mp_module.MPModule):
     def __init__(self, mpstate):
         super(ArmModule, self).__init__(mpstate, "arm", "arm/disarm handling")
-        checkables = "<" + "|".join(arming_masks.keys()) + ">"
+        checkables = "<" + "|".join(list(arming_masks.keys())) + ">"
         self.add_command('arm', self.cmd_arm,      'arm motors', ['check ' + self.checkables(),
                                       'uncheck ' + self.checkables(),
                                       'list',
@@ -36,7 +36,7 @@ class ArmModule(mp_module.MPModule):
         self.was_armed = False
 
     def checkables(self):
-        return "<" + "|".join(arming_masks.keys()) + ">"
+        return "<" + "|".join(list(arming_masks.keys())) + ">"
 
     def cmd_arm(self, args):
         '''arm commands'''
@@ -48,25 +48,25 @@ class ArmModule(mp_module.MPModule):
 
         if args[0] == "check":
             if (len(args) < 2):
-                print("usage: arm check " + self.checkables())
+                print(("usage: arm check " + self.checkables()))
                 return
 
             arming_mask = int(self.get_mav_param("ARMING_CHECK",0))
             name = args[1].lower()
             if name == 'all':
-                for name in arming_masks.keys():
+                for name in list(arming_masks.keys()):
                     arming_mask |= arming_masks[name]
             elif name in arming_masks:
                 arming_mask |= arming_masks[name]
             else:
-                print("unrecognized arm check:", name)
+                print(("unrecognized arm check:", name))
                 return
             self.param_set("ARMING_CHECK", arming_mask)
             return
 
         if args[0] == "uncheck":
             if (len(args) < 2):
-                print("usage: arm uncheck " + self.checkables())
+                print(("usage: arm uncheck " + self.checkables()))
                 return
 
             arming_mask = int(self.get_mav_param("ARMING_CHECK",0))
@@ -76,7 +76,7 @@ class ArmModule(mp_module.MPModule):
             elif name in arming_masks:
                 arming_mask &= ~arming_masks[name]
             else:
-                print("unrecognized arm check:", args[1])
+                print(("unrecognized arm check:", args[1]))
                 return
 
             self.param_set("ARMING_CHECK", arming_mask)
@@ -86,7 +86,7 @@ class ArmModule(mp_module.MPModule):
             arming_mask = int(self.get_mav_param("ARMING_CHECK",0))
             if arming_mask == 0:
                 print("NONE")
-            for name in arming_masks.keys():
+            for name in list(arming_masks.keys()):
                 if arming_masks[name] & arming_mask:
                     print(name)
             return
@@ -132,7 +132,7 @@ class ArmModule(mp_module.MPModule):
         arming_mask = int(self.get_mav_param("ARMING_CHECK",0))
         if arming_mask == 1:
             return True
-        for bit in arming_masks.values():
+        for bit in list(arming_masks.values()):
             if not arming_mask & bit and bit != 1:
                 return False
         return True

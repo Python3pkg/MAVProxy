@@ -165,7 +165,7 @@ def degrees_to_dms(degrees):
     deg = int(degrees)
     min = int((degrees - deg)*60)
     sec = ((degrees - deg) - (min/60.0))*60*60
-    return u'%d\u00b0%02u\'%05.2f"' % (deg, abs(min), abs(sec))
+    return '%d\u00b0%02u\'%05.2f"' % (deg, abs(min), abs(sec))
 
 
 class UTMGrid:
@@ -215,7 +215,7 @@ def wxToPIL(wimg):
 
 def PILTowx(pimg):
     '''convert a PIL Image to a wx image'''
-    from wx_loader import wx
+    from .wx_loader import wx
     wimg = wx.EmptyImage(pimg.size[0], pimg.size[1])
     wimg.SetData(pimg.convert('RGB').tostring())
     return wimg
@@ -233,12 +233,12 @@ def dot_mavproxy(name=None):
 
 def download_url(url):
     '''download a URL and return the content'''
-    import urllib2
+    import urllib.request, urllib.error, urllib.parse
     try:
-        resp = urllib2.urlopen(url)
+        resp = urllib.request.urlopen(url)
         headers = resp.info()
-    except urllib2.URLError as e:
-        print('Error downloading %s' % url)
+    except urllib.error.URLError as e:
+        print(('Error downloading %s' % url))
         return None
     return resp.read()
 
@@ -246,14 +246,14 @@ def download_url(url):
 def download_files(files):
     '''download an array of files'''
     for (url, file) in files:
-        print("Downloading %s as %s" % (url, file))
+        print(("Downloading %s as %s" % (url, file)))
         data = download_url(url)
         if data is None:
             continue
         try:
             open(file, mode='w').write(data)
         except Exception as e:
-            print("Failed to save to %s : %s" % (file, e))
+            print(("Failed to save to %s : %s" % (file, e)))
 
 
 child_fd_list = []

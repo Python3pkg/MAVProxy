@@ -28,7 +28,7 @@ class PPPModule(mp_module.MPModule):
             # EOF on the child fd
             self.stop_ppp_link()
             return
-        print("ppp packet len=%u" % len(buf))
+        print(("ppp packet len=%u" % len(buf)))
         master = self.master
         master.mav.ppp_send(len(buf), buf)
 
@@ -76,7 +76,7 @@ class PPPModule(mp_module.MPModule):
             return
         if args[0] == "command":
             if len(args) == 1:
-                print("ppp.command=%s" % " ".join(self.command))
+                print(("ppp.command=%s" % " ".join(self.command)))
             else:
                 self.command = args[1:]
         elif args[0] == "start":
@@ -93,7 +93,7 @@ class PPPModule(mp_module.MPModule):
     def mavlink_packet(self, m):
         '''handle an incoming mavlink packet'''
         if m.get_type() == 'PPP' and self.ppp_fd != -1:
-            print("got ppp mavlink pkt len=%u" % m.length)
+            print(("got ppp mavlink pkt len=%u" % m.length))
             os.write(self.ppp_fd, m.data[:m.length])
 
 def init(mpstate):

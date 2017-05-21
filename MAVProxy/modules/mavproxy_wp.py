@@ -31,7 +31,7 @@ class WPModule(mp_module.MPModule):
             waytxt = os.path.join(mpstate.status.logdir, 'way.txt')
             if os.path.exists(waytxt):
                 self.wploader.load(waytxt)
-                print("Loaded waypoints from %s" % waytxt)
+                print(("Loaded waypoints from %s" % waytxt))
 
         self.menu_added_console = False
         self.menu_added_map = False
@@ -81,9 +81,9 @@ class WPModule(mp_module.MPModule):
     def wp_status(self):
         '''show status of wp download'''
         try:
-            print("Have %u of %u waypoints" % (self.wploader.count()+len(self.wp_received), self.wploader.expected_count))
+            print(("Have %u of %u waypoints" % (self.wploader.count()+len(self.wp_received), self.wploader.expected_count)))
         except Exception:
-            print("Have %u waypoints" % (self.wploader.count()+len(self.wp_received)))
+            print(("Have %u waypoints" % (self.wploader.count()+len(self.wp_received))))
 
     def mavlink_packet(self, m):
         '''handle an incoming mavlink packet'''
@@ -118,14 +118,14 @@ class WPModule(mp_module.MPModule):
             if self.wp_op == 'list':
                 for i in range(self.wploader.count()):
                     w = self.wploader.wp(i)
-                    print("%u %u %.10f %.10f %f p1=%.1f p2=%.1f p3=%.1f p4=%.1f cur=%u auto=%u" % (
+                    print(("%u %u %.10f %.10f %f p1=%.1f p2=%.1f p3=%.1f p4=%.1f cur=%u auto=%u" % (
                         w.command, w.frame, w.x, w.y, w.z,
                         w.param1, w.param2, w.param3, w.param4,
-                        w.current, w.autocontinue))
+                        w.current, w.autocontinue)))
                 if self.logdir != None:
                     waytxt = os.path.join(self.logdir, 'way.txt')
                     self.save_waypoints(waytxt)
-                    print("Saved waypoints to %s" % waytxt)
+                    print(("Saved waypoints to %s" % waytxt))
             elif self.wp_op == "save":
                 self.save_waypoints(self.wp_save_filename)
             self.wp_op = None
@@ -159,7 +159,7 @@ class WPModule(mp_module.MPModule):
             # cope with packet loss fetching mission
             if self.master is not None and self.master.time_since('MISSION_ITEM') >= 2 and self.wploader.count() < getattr(self.wploader,'expected_count',0):
                 wps = self.missing_wps_to_request();
-                print("re-requesting WPs %s" % str(wps))
+                print(("re-requesting WPs %s" % str(wps)))
                 self.send_wp_requests(wps)
         if self.module('console') is not None and not self.menu_added_console:
             self.menu_added_console = True
@@ -204,9 +204,9 @@ class WPModule(mp_module.MPModule):
         try:
             self.wploader.load(filename)
         except Exception as msg:
-            print("Unable to load %s - %s" % (filename, msg))
+            print(("Unable to load %s - %s" % (filename, msg)))
             return
-        print("Loaded %u waypoints from %s" % (self.wploader.count(), filename))
+        print(("Loaded %u waypoints from %s" % (self.wploader.count(), filename)))
         self.send_all_waypoints()
 
     def update_waypoints(self, filename, wpnum):
@@ -216,18 +216,18 @@ class WPModule(mp_module.MPModule):
         try:
             self.wploader.load(filename)
         except Exception as msg:
-            print("Unable to load %s - %s" % (filename, msg))
+            print(("Unable to load %s - %s" % (filename, msg)))
             return
         if self.wploader.count() == 0:
-            print("No waypoints found in %s" % filename)
+            print(("No waypoints found in %s" % filename))
             return
         if wpnum == -1:
-            print("Loaded %u updated waypoints from %s" % (self.wploader.count(), filename))
+            print(("Loaded %u updated waypoints from %s" % (self.wploader.count(), filename)))
         elif wpnum >= self.wploader.count():
-            print("Invalid waypoint number %u" % wpnum)
+            print(("Invalid waypoint number %u" % wpnum))
             return
         else:
-            print("Loaded updated waypoint %u from %s" % (wpnum, filename))
+            print(("Loaded updated waypoint %u from %s" % (wpnum, filename)))
 
         self.loading_waypoints = True
         self.loading_waypoint_lasttime = time.time()
@@ -246,9 +246,9 @@ class WPModule(mp_module.MPModule):
         try:
             self.wploader.save(filename)
         except Exception as msg:
-            print("Failed to save %s - %s" % (filename, msg))
+            print(("Failed to save %s - %s" % (filename, msg)))
             return
-        print("Saved %u waypoints to %s" % (self.wploader.count(), filename))
+        print(("Saved %u waypoints to %s" % (self.wploader.count(), filename)))
 
     def get_default_frame(self):
         '''default frame for waypoints'''
@@ -301,7 +301,7 @@ class WPModule(mp_module.MPModule):
         '''close the loop on a mission'''
         loader = self.wploader
         if loader.count() < 2:
-            print("Not enough waypoints (%u)" % loader.count())
+            print(("Not enough waypoints (%u)" % loader.count()))
             return
         wp = loader.wp(loader.count()-2)
         if wp.command == mavutil.mavlink.MAV_CMD_DO_JUMP:
@@ -344,7 +344,7 @@ class WPModule(mp_module.MPModule):
             return
         idx = int(args[0])
         if idx < 1 or idx > self.wploader.count():
-            print("Invalid wp number %u" % idx)
+            print(("Invalid wp number %u" % idx))
             return
         try:
             latlon = self.module('map').click_position
@@ -378,7 +378,7 @@ class WPModule(mp_module.MPModule):
                                                         self.target_component,
                                                         idx, idx)
         self.wploader.set(wp, idx)
-        print("Moved WP %u to %f, %f at %.1fm" % (idx, lat, lon, wp.z))
+        print(("Moved WP %u to %f, %f at %.1fm" % (idx, lat, lon, wp.z)))
 
 
     def cmd_wp_movemulti(self, args):
@@ -388,15 +388,15 @@ class WPModule(mp_module.MPModule):
             return
         idx = int(args[0])
         if idx < 1 or idx > self.wploader.count():
-            print("Invalid wp number %u" % idx)
+            print(("Invalid wp number %u" % idx))
             return
         wpstart = int(args[1])
         if wpstart < 1 or wpstart > self.wploader.count():
-            print("Invalid wp number %u" % wpstart)
+            print(("Invalid wp number %u" % wpstart))
             return
         wpend = int(args[2])
         if wpend < 1 or wpend > self.wploader.count():
-            print("Invalid wp number %u" % wpend)
+            print(("Invalid wp number %u" % wpend))
             return
         if idx < wpstart or idx > wpend:
             print("WPNUM must be between WPSTART and WPEND")
@@ -452,7 +452,7 @@ class WPModule(mp_module.MPModule):
         self.master.mav.mission_write_partial_list_send(self.target_system,
                                                         self.target_component,
                                                         wpstart, wpend+1)
-        print("Moved WPs %u:%u to %f, %f rotation=%.1f" % (wpstart, wpend, lat, lon, rotation))
+        print(("Moved WPs %u:%u to %f, %f rotation=%.1f" % (wpstart, wpend, lat, lon, rotation)))
 
 
     def cmd_wp_changealt(self, args):
@@ -462,7 +462,7 @@ class WPModule(mp_module.MPModule):
             return
         idx = int(args[0])
         if idx < 1 or idx > self.wploader.count():
-            print("Invalid wp number %u" % idx)
+            print(("Invalid wp number %u" % idx))
             return
         newalt = float(args[1])
         if len(args) >= 3:
@@ -484,7 +484,7 @@ class WPModule(mp_module.MPModule):
         self.master.mav.mission_write_partial_list_send(self.target_system,
                                                         self.target_component,
                                                         idx, idx+count)
-        print("Changed alt for WPs %u:%u to %f" % (idx, idx+(count-1), newalt))
+        print(("Changed alt for WPs %u:%u to %f" % (idx, idx+(count-1), newalt)))
 
     def cmd_wp_remove(self, args):
         '''handle wp remove'''
@@ -493,7 +493,7 @@ class WPModule(mp_module.MPModule):
             return
         idx = int(args[0])
         if idx < 0 or idx >= self.wploader.count():
-            print("Invalid wp number %u" % idx)
+            print(("Invalid wp number %u" % idx))
             return
         wp = self.wploader.wp(idx)
 
@@ -504,7 +504,7 @@ class WPModule(mp_module.MPModule):
 
         self.wploader.remove(wp)
         self.send_all_waypoints()
-        print("Removed WP %u" % idx)
+        print(("Removed WP %u" % idx))
 
     def cmd_wp_undo(self):
         '''handle wp undo'''
@@ -538,17 +538,17 @@ class WPModule(mp_module.MPModule):
             return
         idx = int(args[0])
         if idx < 1 or idx > self.wploader.count():
-            print("Invalid wp number %u" % idx)
+            print(("Invalid wp number %u" % idx))
             return
         wp = self.wploader.wp(idx)
         param = [wp.param1, wp.param2, wp.param3, wp.param4]
         pnum = int(args[1])
         if pnum < 1 or pnum > 4:
-            print("Invalid param number %u" % pnum)
+            print(("Invalid param number %u" % pnum))
             return
 
         if len(args) == 2:
-            print("Param %u: %f" % (pnum, param[pnum-1]))
+            print(("Param %u: %f" % (pnum, param[pnum-1])))
             return
 
         param[pnum-1] = float(args[2])
@@ -565,7 +565,7 @@ class WPModule(mp_module.MPModule):
                                                         self.target_component,
                                                         idx, idx)
         self.wploader.set(wp, idx)
-        print("Set param %u for %u to %f" % (pnum, idx, param[pnum-1]))
+        print(("Set param %u for %u to %f" % (pnum, idx, param[pnum-1])))
 
     def cmd_wp(self, args):
         '''waypoint commands'''
@@ -643,7 +643,7 @@ class WPModule(mp_module.MPModule):
             if len(args) > 1:
                 self.settings.wpalt = int(args[1])
             self.mpstate.map_functions['draw_lines'](self.wp_draw_callback)
-            print("Drawing waypoints on map at altitude %d" % self.settings.wpalt)
+            print(("Drawing waypoints on map at altitude %d" % self.settings.wpalt))
         elif args[0] == "sethome":
             self.set_home_location()
         elif args[0] == "loop":

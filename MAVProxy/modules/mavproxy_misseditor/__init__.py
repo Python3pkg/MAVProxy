@@ -15,7 +15,7 @@ from pymavlink import mavutil
 
 import multiprocessing, time
 import threading
-import Queue
+import queue
 import traceback
 
 class MissionEditorEventThread(threading.Thread):
@@ -177,7 +177,7 @@ class MissionEditorModule(mp_module.MPModule):
         self.unload_check_interval = 0.1 # seconds
 
         self.time_to_quit = False
-        self.mavlink_message_queue = Queue.Queue()
+        self.mavlink_message_queue = queue.Queue()
         self.mavlink_message_queue_handler = threading.Thread(target=self.mavlink_message_queue_handler)
         self.mavlink_message_queue_handler.start()
 
@@ -186,7 +186,7 @@ class MissionEditorModule(mp_module.MPModule):
         while not self.time_to_quit:
             try:
                 m = self.mavlink_message_queue.get(block=0)
-            except Queue.Empty:
+            except queue.Empty:
                 time.sleep(0.1)
                 continue
 
@@ -197,7 +197,7 @@ class MissionEditorModule(mp_module.MPModule):
             try:
                 self.process_mavlink_packet(m)
             except Exception as e:
-                print("Caught exception (%s)" % str(e))
+                print(("Caught exception (%s)" % str(e)))
                 traceback.print_stack()
 
             self.gui_event_queue_lock.release()
@@ -251,7 +251,7 @@ class MissionEditorModule(mp_module.MPModule):
             #still expecting wps?
             if (len(self.wps_received) < self.num_wps_expected):
                 #if we haven't already received this wp, write it to the GUI:
-                if (m.seq not in self.wps_received.keys()):
+                if (m.seq not in list(self.wps_received.keys())):
                     self.gui_event_queue.put(MissionEditorEvent(
                         me_event.MEGE_SET_MISS_ITEM,
                         num=m.seq,command=m.command,param1=m.param1,

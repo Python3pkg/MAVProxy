@@ -36,9 +36,9 @@ class TerrainModule(mp_module.MPModule):
             print(usage)
             return
         if args[0] == "status":
-            print("blocks_sent: %u requests_received: %u" % (
+            print(("blocks_sent: %u requests_received: %u" % (
                 self.blocks_sent,
-                self.requests_received))
+                self.requests_received)))
         elif args[0] == "set":
             self.terrain_settings.command(args[1:])
         elif args[0] == "check":
@@ -98,7 +98,7 @@ class TerrainModule(mp_module.MPModule):
             alt = self.ElevationModel.GetElevation(lat2, lon2)
             if alt is None:
                 if self.terrain_settings.debug:
-                    print("no alt ", lat2, lon2)
+                    print(("no alt ", lat2, lon2))
                 return
             data.append(int(alt))
         self.master.mav.terrain_data_send(self.current_request.lat,
@@ -112,13 +112,13 @@ class TerrainModule(mp_module.MPModule):
         if self.terrain_settings.debug and bit == 55:
             lat = self.current_request.lat * 1.0e-7
             lon = self.current_request.lon * 1.0e-7
-            print("--lat=%f --lon=%f %.1f" % (
-                lat, lon, self.ElevationModel.GetElevation(lat, lon)))
+            print(("--lat=%f --lon=%f %.1f" % (
+                lat, lon, self.ElevationModel.GetElevation(lat, lon))))
             (lat2,lon2) = mp_util.gps_offset(lat, lon,
                                              east=32*self.current_request.grid_spacing,
                                              north=28*self.current_request.grid_spacing)
-            print("--lat=%f --lon=%f %.1f" % (
-                lat2, lon2, self.ElevationModel.GetElevation(lat2, lon2)))
+            print(("--lat=%f --lon=%f %.1f" % (
+                lat2, lon2, self.ElevationModel.GetElevation(lat2, lon2))))
 
 
     def send_terrain_data(self):

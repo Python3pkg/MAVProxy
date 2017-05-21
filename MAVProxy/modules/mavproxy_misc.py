@@ -28,7 +28,7 @@ def run_command(args, cwd = None, shell = False, timeout = None, env = None):
     See http://stackoverflow.com/questions/1191374/subprocess-with-timeout
     '''
     from subprocess import PIPE, Popen
-    from StringIO import StringIO
+    from io import StringIO
     import fcntl, os, signal
     p = Popen(args, shell = shell, cwd = cwd, stdout = PIPE, stderr = PIPE, env = env)
     tstart = time.time()
@@ -50,7 +50,7 @@ def run_command(args, cwd = None, shell = False, timeout = None, env = None):
         if retcode is not None:
             break
         if timeout is not None and time.time() > tstart + timeout:
-            print("timeout in process %u" % p.pid)
+            print(("timeout in process %u" % p.pid))
             try:
                 os.kill(p.pid, signal.SIGKILL)
             except OSError:
@@ -93,18 +93,18 @@ class MiscModule(mp_module.MPModule):
 
     def cmd_alt(self, args):
         '''show altitude'''
-        print("Altitude:  %.1f" % self.status.altitude)
+        print(("Altitude:  %.1f" % self.status.altitude))
         qnh_pressure = self.get_mav_param('AFS_QNH_PRESSURE', None)
         if qnh_pressure is not None and qnh_pressure > 0:
             ground_temp = self.get_mav_param('GND_TEMP', 21)
             pressure = self.master.field('SCALED_PRESSURE', 'press_abs', 0)
             qnh_alt = self.altitude_difference(qnh_pressure, pressure, ground_temp)
-            print("QNH Alt: %u meters %u feet for QNH pressure %.1f" % (qnh_alt, qnh_alt*3.2808, qnh_pressure))
-        print("QNH Estimate: %.1f millibars" % self.qnh_estimate())
+            print(("QNH Alt: %u meters %u feet for QNH pressure %.1f" % (qnh_alt, qnh_alt*3.2808, qnh_pressure)))
+        print(("QNH Estimate: %.1f millibars" % self.qnh_estimate()))
 
     def cmd_shell(self, args):
         '''shell command'''
-        print(run_command(args, shell=False, timeout=3))
+        print((run_command(args, shell=False, timeout=3)))
 
     def cmd_up(self, args):
         '''adjust TRIM_PITCH_CD up by 5 degrees'''
@@ -118,9 +118,9 @@ class MiscModule(mp_module.MPModule):
             return
         new_trim = int(old_trim + (adjust*100))
         if math.fabs(new_trim - old_trim) > 1000:
-            print("Adjustment by %d too large (from %d to %d)" % (adjust*100, old_trim, new_trim))
+            print(("Adjustment by %d too large (from %d to %d)" % (adjust*100, old_trim, new_trim)))
             return
-        print("Adjusting TRIM_PITCH_CD from %d to %d" % (old_trim, new_trim))
+        print(("Adjusting TRIM_PITCH_CD from %d to %d" % (old_trim, new_trim)))
         self.param_set('TRIM_PITCH_CD', new_trim)
 
     def cmd_reboot(self, args):
@@ -136,7 +136,7 @@ class MiscModule(mp_module.MPModule):
         if tusec == 0:
             print("No SYSTEM_TIME time available")
             return
-        print("%s (%s)\n" % (time.ctime(tusec * 1.0e-6), time.ctime()))
+        print(("%s (%s)\n" % (time.ctime(tusec * 1.0e-6), time.ctime())))
 
     def cmd_changealt(self, args):
         '''change target altitude'''
@@ -151,7 +151,7 @@ class MiscModule(mp_module.MPModule):
                                           mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
                                           3, 1, 0, 0, 0, 0,
                                           0, 0, relalt)
-        print("Sent change altitude command for %.1f meters" % relalt)
+        print(("Sent change altitude command for %.1f meters" % relalt))
 
     def cmd_land(self, args):
         '''auto land commands'''
@@ -223,7 +223,7 @@ class MiscModule(mp_module.MPModule):
                 print("No repeats")
                 return
             for i in range(len(self.repeats)):
-                print("%u: %s" % (i, self.repeats[i]))
+                print(("%u: %s" % (i, self.repeats[i])))
             return
         if args[0] == 'add':
             if len(args) < 3:
@@ -236,7 +236,7 @@ class MiscModule(mp_module.MPModule):
                 return
             i = int(args[1])
             if i < 0 or i >= len(self.repeats):
-                print("Invalid index %d" % i)
+                print(("Invalid index %d" % i))
                 return
             self.repeats.pop(i)
             return

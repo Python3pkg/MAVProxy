@@ -131,7 +131,7 @@ class MPMenuRadio(MPMenuItem):
 
     def _append(self, menu):
         '''append this menu item to a menu'''
-        from wx_loader import wx
+        from .wx_loader import wx
         submenu = wx.Menu()
         for i in range(len(self.items)):
             submenu.AppendRadioItem(self.id()+i, self.items[i], self.description)
@@ -184,7 +184,7 @@ class MPMenuSubMenu(MPMenuGeneric):
 
     def wx_menu(self):
         '''return a wx.Menu() for this menu'''
-        from wx_loader import wx
+        from .wx_loader import wx
         menu = wx.Menu()
         for i in range(len(self.items)):
             m = self.items[i]
@@ -201,7 +201,7 @@ class MPMenuSubMenu(MPMenuGeneric):
 
     def _append(self, menu):
         '''append this menu item to a menu'''
-        from wx_loader import wx
+        from .wx_loader import wx
         if platform.system() == 'Darwin':
             menu.Append(-1, self.name, self.wx_menu()) #use wxPython_phoenix
         else:
@@ -237,11 +237,11 @@ class MPMenuTop(object):
             if m.name == submenu_path[0]:
                 m.add_to_submenu(submenu_path[1:], item)
                 return
-        raise(ValueError("No submenu (%s) found" % (submenu_path[0])))
+        raise ValueError
 
     def wx_menu(self):
         '''return a wx.MenuBar() for the menu'''
-        from wx_loader import wx
+        from .wx_loader import wx
 
         menubar = wx.MenuBar()
         for i in range(len(self.items)):
@@ -267,7 +267,7 @@ class MPMenuCallFileDialog(object):
 
     def call(self):
         '''show a file dialog'''
-        from wx_loader import wx
+        from .wx_loader import wx
 
         # remap flags to wx descriptors
         flag_map = {
@@ -275,7 +275,7 @@ class MPMenuCallFileDialog(object):
             'save': wx.FD_SAVE,
             'overwrite_prompt': wx.FD_OVERWRITE_PROMPT,
         }
-        flagsMapped = map(lambda x: flag_map[x], self.flags)
+        flagsMapped = [flag_map[x] for x in self.flags]
 
         #need to OR together the elements of the flagsMapped tuple
         if len(flagsMapped) == 1:
@@ -294,7 +294,7 @@ class MPMenuCallTextDialog(object):
 
     def call(self):
         '''show a value dialog'''
-        from wx_loader import wx
+        from .wx_loader import wx
 
         dlg = wx.TextEntryDialog(None, self.title, self.title, defaultValue=str(self.default))
         if dlg.ShowModal() != wx.ID_OK:
@@ -316,8 +316,8 @@ class MPMenuChildMessageDialog(object):
     def call(self):
         '''show the dialog as a child process'''
         mp_util.child_close_fds()
-        import wx_processguard
-        from wx_loader import wx
+        from . import wx_processguard
+        from .wx_loader import wx
         from wx.lib.agw.genericmessagedialog import GenericMessageDialog
         app = wx.App(False)
         # note! font size change is not working. I don't know why yet
@@ -375,7 +375,7 @@ if __name__ == '__main__':
     while im.is_alive():
         for event in im.events():
             if isinstance(event, MPMenuItem):
-                print(event, getattr(event, 'popup_pos', None))
+                print((event, getattr(event, 'popup_pos', None)))
                 continue
             else:
                 print(event)

@@ -238,7 +238,7 @@ class MapModule(mp_module.MPModule):
         '''remove a rally point'''
         a = key.split(' ')
         if a[0] != 'Rally' or len(a) != 2:
-            print("Bad rally object %s" % key)
+            print(("Bad rally object %s" % key))
             return
         i = int(a[1])
         self.mpstate.functions.process_stdin('rally remove %u' % i)
@@ -247,7 +247,7 @@ class MapModule(mp_module.MPModule):
         '''move a rally point'''
         a = key.split(' ')
         if a[0] != 'Rally' or len(a) != 2:
-            print("Bad rally object %s" % key)
+            print(("Bad rally object %s" % key))
             return
         i = int(a[1])
         self.moving_rally = i
@@ -256,15 +256,15 @@ class MapModule(mp_module.MPModule):
         '''return a mission idx from a selection_index'''
         a = key.split(' ')
         if a[0] != 'mission' or len(a) != 2:
-            print("Bad mission object %s" % key)
+            print(("Bad mission object %s" % key))
             return None
         midx = int(a[1])
         if midx < 0 or midx >= len(self.mission_list):
-            print("Bad mission index %s" % key)
+            print(("Bad mission index %s" % key))
             return None
         mlist = self.mission_list[midx]
         if selection_index < 0 or selection_index >= len(mlist):
-            print("Bad mission polygon %s" % selection_index)
+            print(("Bad mission polygon %s" % selection_index))
             return None
         idx = mlist[selection_index]
         return idx
@@ -273,7 +273,7 @@ class MapModule(mp_module.MPModule):
         '''move a mission point'''
         idx = self.selection_index_to_idx(key, selection_index)
         self.moving_wp = idx
-        print("Moving wp %u" % idx)
+        print(("Moving wp %u" % idx))
 
     def remove_mission(self, key, selection_index):
         '''remove a mission point'''
@@ -287,7 +287,7 @@ class MapModule(mp_module.MPModule):
     def move_fencepoint(self, key, selection_index):
         '''move a fence point'''
         self.moving_fencepoint = selection_index
-        print("Moving fence point %u" % selection_index)
+        print(("Moving fence point %u" % selection_index))
 
     def set_mission(self, key, selection_index):
         '''set a mission point'''
@@ -434,7 +434,7 @@ class MapModule(mp_module.MPModule):
         '''called when user selects "Set Home" on map'''
         (lat, lon) = (self.click_position[0], self.click_position[1])
         alt = self.ElevationMap.GetElevation(lat, lon)
-        print("Setting home to: ", lat, lon, alt)
+        print(("Setting home to: ", lat, lon, alt))
         self.master.mav.command_long_send(
             self.settings.target_system, self.settings.target_component,
             mavutil.mavlink.MAV_CMD_DO_SET_HOME,

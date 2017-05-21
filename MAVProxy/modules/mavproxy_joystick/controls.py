@@ -123,14 +123,14 @@ class Joystick (object):
         for control in controls['controls']:
             if control['type'] == 'button':
                 kwargs = {k: control[k]
-                          for k in control.keys()
+                          for k in list(control.keys())
                           if k in ['outlow', 'outhigh']}
 
                 handler = Button(self.joystick, control['id'], **kwargs)
 
             elif control['type'] == 'axis':
                 kwargs = {k: control[k]
-                          for k in control.keys()
+                          for k in list(control.keys())
                           if k in ['inlow', 'inhigh',
                                    'outlow', 'outhigh', 'invert']}
 
@@ -141,7 +141,7 @@ class Joystick (object):
                                    buttons=control['buttons'])
             elif control['type'] == 'hat':
                 kwargs = {k: control[k]
-                          for k in control.keys()
+                          for k in list(control.keys())
                           if k in ['outlow', 'outhigh']}
 
                 handler = Hat(self.joystick, control['id'], control['axis'])

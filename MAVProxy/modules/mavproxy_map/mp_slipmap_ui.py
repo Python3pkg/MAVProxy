@@ -1,9 +1,9 @@
 from MAVProxy.modules.lib.mp_menu import *
 from ..lib.wx_loader import wx
-import mp_elevation
+from . import mp_elevation
 import os
 import functools
-from mp_slipmap_util import *
+from .mp_slipmap_util import *
 import cv2
 import numpy as np
 
@@ -92,7 +92,7 @@ class MPSlipMapFrame(wx.Frame):
         state = self.state
 
         if layers is None:
-            layers = state.layers.keys()
+            layers = list(state.layers.keys())
         for layer in layers:
             if key in state.layers[layer]:
                 return state.layers[layer][key]
@@ -384,7 +384,7 @@ class MPSlipMapPanel(wx.Panel):
 
     def draw_objects(self, objects, bounds, img):
         '''draw objects on the image'''
-        keys = objects.keys()
+        keys = list(objects.keys())
         keys.sort()
         for k in keys:
             obj = objects[k]
@@ -422,7 +422,7 @@ class MPSlipMapPanel(wx.Panel):
             SlipGrid('grid', layer=3, linewidth=1, colour=(255,255,0)).draw(img, self.pixmapper, bounds)
 
         # draw layer objects
-        keys = state.layers.keys()
+        keys = list(state.layers.keys())
         keys.sort()
         for k in keys:
             self.draw_objects(state.layers[k], bounds, img)
@@ -558,7 +558,7 @@ class MPSlipMapPanel(wx.Panel):
         '''clear all thumbnails from the map'''
         state = self.state
         for l in state.layers:
-            keys = state.layers[l].keys()[:]
+            keys = list(state.layers[l].keys())[:]
             for key in keys:
                 if (isinstance(state.layers[l][key], SlipThumbnail)
                     and not isinstance(state.layers[l][key], SlipIcon)):

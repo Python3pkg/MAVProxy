@@ -42,25 +42,25 @@ class OutputModule(mp_module.MPModule):
 
     def cmd_output_list(self):
         '''list outputs'''
-        print("%u outputs" % len(self.mpstate.mav_outputs))
+        print(("%u outputs" % len(self.mpstate.mav_outputs)))
         for i in range(len(self.mpstate.mav_outputs)):
             conn = self.mpstate.mav_outputs[i]
-            print("%u: %s" % (i, conn.address))
+            print(("%u: %s" % (i, conn.address)))
         if len(self.mpstate.sysid_outputs) > 0:
-            print("%u sysid outputs" % len(self.mpstate.sysid_outputs))
+            print(("%u sysid outputs" % len(self.mpstate.sysid_outputs)))
             for sysid in self.mpstate.sysid_outputs:
                 conn = self.mpstate.sysid_outputs[sysid]
-                print("%u: %s" % (sysid, conn.address))
+                print(("%u: %s" % (sysid, conn.address)))
 
     def cmd_output_add(self, args):
         '''add new output'''
         device = args[0]
-        print("Adding output %s" % device)
+        print(("Adding output %s" % device))
         try:
             conn = mavutil.mavlink_connection(device, input=False, source_system=self.settings.source_system)
             conn.mav.srcComponent = self.settings.source_component
         except Exception:
-            print("Failed to connect to %s" % device)
+            print(("Failed to connect to %s" % device))
             return
         self.mpstate.mav_outputs.append(conn)
         try:
@@ -72,12 +72,12 @@ class OutputModule(mp_module.MPModule):
         '''add new output for a specific MAVLink sysID'''
         sysid = int(args[0])
         device = args[1]
-        print("Adding output %s for sysid %u" % (device, sysid))
+        print(("Adding output %s for sysid %u" % (device, sysid)))
         try:
             conn = mavutil.mavlink_connection(device, input=False, source_system=self.settings.source_system)
             conn.mav.srcComponent = self.settings.source_component
         except Exception:
-            print("Failed to connect to %s" % device)
+            print(("Failed to connect to %s" % device))
             return
         try:
             mp_util.child_fd_list_add(conn.port.fileno())
@@ -93,7 +93,7 @@ class OutputModule(mp_module.MPModule):
         for i in range(len(self.mpstate.mav_outputs)):
             conn = self.mpstate.mav_outputs[i]
             if str(i) == device or conn.address == device:
-                print("Removing output %s" % conn.address)
+                print(("Removing output %s" % conn.address))
                 try:
                     mp_util.child_fd_list_add(conn.port.fileno())
                 except Exception:

@@ -3,7 +3,7 @@ import fnmatch
 
 miss_cmds = {}
 frame_enum = {0: "Abs", 3: "Rel", 10: "AGL"}
-frame_enum_rev = {v:k for k,v in frame_enum.items()}
+frame_enum_rev = {v:k for k,v in list(frame_enum.items())}
 
 # auto-generate the list of mission commands
 for cmd in mavutil.mavlink.enums['MAV_CMD']:
@@ -16,7 +16,7 @@ for cmd in mavutil.mavlink.enums['MAV_CMD']:
 
 def cmd_reverse_lookup(command_name):
     '''returns 0 if key not found'''
-    for key, value in miss_cmds.items():
+    for key, value in list(miss_cmds.items()):
         if (value.upper() == command_name.upper()):
             return key
     return 0
@@ -63,6 +63,6 @@ def get_column_labels(command_name):
         return {}
     labels = {}
     enum = mavutil.mavlink.enums['MAV_CMD'][cmd]
-    for col in enum.param.keys():
+    for col in list(enum.param.keys()):
         labels[col] = make_column_label(command_name, enum.param[col], "P%u" % col)
     return labels

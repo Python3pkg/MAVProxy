@@ -64,8 +64,8 @@ class RCModule(mp_module.MPModule):
         if value == 0:
             print("Disabled RC switch override")
         else:
-            print("Set RC switch override to %u (PWM=%u channel=%u)" % (
-                value, mapping[value], flite_mode_ch_parm))
+            print(("Set RC switch override to %u (PWM=%u channel=%u)" % (
+                value, mapping[value], flite_mode_ch_parm)))
 
     def set_override(self, newchannels):
         '''this is a public method for use by drone API or other scripting'''

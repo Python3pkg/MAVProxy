@@ -82,21 +82,21 @@ if __name__ == "__main__":
         print("Tile not available")
         sys.exit(1)
     t1 = time.time()+.000001
-    print("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0)))
+    print(("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0))))
 
     lat = opts.lat+0.001
     lon = opts.lon+0.001
     t0 = time.time()
     alt = EleModel.GetElevation(lat, lon, timeout=10)
     t1 = time.time()+.000001
-    print("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0)))
+    print(("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0))))
 
     lat = opts.lat-0.001
     lon = opts.lon-0.001
     t0 = time.time()
     alt = EleModel.GetElevation(lat, lon, timeout=10)
     t1 = time.time()+.000001
-    print("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0)))
+    print(("Altitude at (%.6f, %.6f) is %u m. Pulled at %.1f FPS" % (lat, lon, alt, 1/(t1-t0))))
 
 
 

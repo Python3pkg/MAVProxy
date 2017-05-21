@@ -47,7 +47,7 @@ class TrackerModule(mp_module.MPModule):
 
     def complete_parameter(self, text):
         '''complete a tracker parameter'''
-        return self.tracker_param.keys()
+        return list(self.tracker_param.keys())
 
     def find_connection(self):
         '''find an antenna tracker connection if possible'''
@@ -120,11 +120,11 @@ class TrackerModule(mp_module.MPModule):
             print('No mode mapping available')
             return
         if len(args) != 1:
-            print('Available modes: ', mode_mapping.keys())
+            print(('Available modes: ', list(mode_mapping.keys())))
             return
         mode = args[0].upper()
         if mode not in mode_mapping:
-            print('Unknown mode %s: ' % mode)
+            print(('Unknown mode %s: ' % mode))
             return
         connection.set_mode(mode_mapping[mode])
 
@@ -172,8 +172,8 @@ class TrackerModule(mp_module.MPModule):
             self.connection.close()
             self.connection = None
             print("Closed old connection")
-        print("connecting to tracker %s at %d" % (self.tracker_settings.port,
-                                                  self.tracker_settings.baudrate))
+        print(("connecting to tracker %s at %d" % (self.tracker_settings.port,
+                                                  self.tracker_settings.baudrate)))
         m = mavutil.mavlink_connection(self.tracker_settings.port,
                                        autoreconnect=True,
                                        source_system=self.settings.source_system,

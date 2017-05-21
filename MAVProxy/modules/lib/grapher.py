@@ -181,7 +181,7 @@ class MavGraph(object):
 
         for i in range(0, len(fields)):
             if len(x[i]) == 0:
-                print("Failed to find any values for field %s" % fields[i])
+                print(("Failed to find any values for field %s" % fields[i]))
                 continue
             if i < len(colors):
                 color = colors[i]
@@ -248,7 +248,7 @@ class MavGraph(object):
 
         if self.show_flightmode:
             mode_patches = []
-            for mode in self.modes_plotted.keys():
+            for mode in list(self.modes_plotted.keys()):
                 (color, alpha) = self.modes_plotted[mode]
                 mode_patches.append(matplotlib.patches.Patch(color=color,
                                                              label=mode, alpha=alpha*1.5))
@@ -360,8 +360,8 @@ class MavGraph(object):
         if self.labels is not None:
             labels = self.labels.split(',')
             if len(labels) != len(fields)*lenmavlist:
-                print("Number of labels (%u) must match number of fields (%u)" % (
-                    len(labels), len(fields)*lenmavlist))
+                print(("Number of labels (%u) must match number of fields (%u)" % (
+                    len(labels), len(fields)*lenmavlist)))
                 return
         else:
             labels = None

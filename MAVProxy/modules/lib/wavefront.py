@@ -33,11 +33,11 @@ The directives supported by the material library parser are:
 Unsupported directives found while parsing are stored in the parser's
 ignored_directives attribute.
 '''
-from __future__ import print_function
+
 
 import os
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except ImportError:
     import pickle
 import threading

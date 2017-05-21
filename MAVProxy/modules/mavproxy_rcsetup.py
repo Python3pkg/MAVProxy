@@ -55,10 +55,10 @@ class RCSetupModule(mp_module.MPModule):
         if (args[0] == "start"):
             if len(args) > 1:
                 self.num_channels = int(args[1])
-            print("Calibrating %u channels" % self.num_channels)
+            print(("Calibrating %u channels" % self.num_channels))
             print("WARNING: remove propellers from electric planes!!")
             print("Push return when ready to calibrate.")
-            raw_input()
+            input()
 
             self.clear_rc_cal()
             self.calibrating = True

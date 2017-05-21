@@ -46,6 +46,6 @@ class MissionEditorEvent:
 
     def get_arg(self, key):
         if not key in self.arg_dict:
-            print("No key %s in %s" % (key, str(self.type)))
+            print(("No key %s in %s" % (key, str(self.type))))
             return None
         return self.arg_dict[key]

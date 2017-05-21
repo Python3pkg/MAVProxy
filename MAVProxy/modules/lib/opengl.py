@@ -18,7 +18,7 @@ Module with helpers for OpenGL rendering.
 import math
 
 from ctypes import *
-from OpenGL.GL import *
+from .OpenGL.GL import *
 from pymavlink.quaternion import Quaternion
 from pymavlink.rotmat import Vector3
 
@@ -588,7 +588,7 @@ class Program:
 
         shader_ids = []
         try:
-            for shader_type, code in self.shaders.items():
+            for shader_type, code in list(self.shaders.items()):
                 shader_id = glCreateShader(shader_type)
                 name = self.shader_type_names[shader_type]
                 if not shader_id:

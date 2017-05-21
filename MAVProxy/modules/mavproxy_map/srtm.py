@@ -6,8 +6,8 @@
 """Load and process SRTM data. Originally written by OpenStreetMap
 Edited by CanberraUAV"""
 
-from HTMLParser import HTMLParser
-import httplib
+from html.parser import HTMLParser
+import http.client
 import re
 import pickle
 import os.path
@@ -77,7 +77,7 @@ class SRTMDownloader():
         self.directory = directory
         self.cachedir = cachedir
         if self.debug:
-            print("SRTMDownloader - server=%s, directory=%s." % (self.server, self.directory))
+            print(("SRTMDownloader - server=%s, directory=%s." % (self.server, self.directory)))
         if not os.path.exists(cachedir):
             mp_util.mkdir_p(cachedir)
         self.filelist = {}
@@ -121,13 +121,13 @@ class SRTMDownloader():
         '''fetch a URL with redirect handling'''
         tries = 0
         while tries < 5:
-                conn = httplib.HTTPConnection(self.server)
+                conn = http.client.HTTPConnection(self.server)
                 conn.request("GET", url)
                 r1 = conn.getresponse()
                 if r1.status in [301, 302, 303, 307]:
                     location = r1.getheader('Location')
                     if self.debug:
-                        print("redirect from %s to %s" % (url, location))
+                        print(("redirect from %s to %s" % (url, location)))
                     url = location
                     conn.close()
                     tries += 1
@@ -144,7 +144,7 @@ class SRTMDownloader():
         """
         mp_util.child_close_fds()
         if self.debug:
-            print("Connecting to %s" % self.server, self.directory)
+            print(("Connecting to %s" % self.server, self.directory))
         try:
             data = self.getURIWithRedirect(self.directory)
         except Exception:
@@ -153,20 +153,20 @@ class SRTMDownloader():
         parser.feed(data)
         continents = parser.getDirListing()
         if self.debug:
-            print('continents: ', continents)
+            print(('continents: ', continents))
 
         for continent in continents:
             if not continent[0].isalpha() or continent.startswith('README'):
                 continue
             if self.debug:
-                print("Downloading file list for: ", continent)
+                print(("Downloading file list for: ", continent))
             url = "%s%s" % (self.directory,continent)
             if self.debug:
-                print("fetching %s" % url)
+                print(("fetching %s" % url))
             try:
                 data = self.getURIWithRedirect(url)
             except Exception as ex:
-                print("Failed to download %s : %s" % (url, ex))
+                print(("Failed to download %s : %s" % (url, ex)))
                 continue
             parser = parseHTMLDirectoryListing()
             parser.feed(data)
@@ -193,7 +193,7 @@ class SRTMDownloader():
             except Exception:
                 pass
         if self.debug:
-            print("created file list with %u entries" % len(self.filelist))
+            print(("created file list with %u entries" % len(self.filelist)))
 
     def parseFilename(self, filename):
         """Get lat/lon values from filename."""
@@ -222,7 +222,7 @@ class SRTMDownloader():
             return 0
         elif not self.filelist:
             if self.debug:
-                print("Filelist download complete, loading data ", self.filelist_file)
+                print(("Filelist download complete, loading data ", self.filelist_file))
             data = open(self.filelist_file, 'rb')
             self.filelist = pickle.load(data)
             data.close()
@@ -274,7 +274,7 @@ class SRTMDownloader():
                 self.ftpfile = None
         except Exception as e:
             if not self.first_failure:
-                print("SRTM Download failed %s on server %s" % (filepath, self.server))
+                print(("SRTM Download failed %s on server %s" % (filepath, self.server)))
                 self.first_failure = True
             pass
 
@@ -453,6 +453,6 @@ if __name__ == '__main__':
     while time.time() - start < 30:
         tile = downloader.getTile(-36, 149)
         if tile:
-            print tile.getAltitudeFromLatLon(-35.282, 149.1287)
+            print(tile.getAltitudeFromLatLon(-35.282, 149.1287))
             break
         time.sleep(0.2)

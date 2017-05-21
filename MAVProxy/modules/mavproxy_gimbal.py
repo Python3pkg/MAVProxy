@@ -67,7 +67,7 @@ class GimbalModule(mp_module.MPModule):
         elif args[0].upper() == 'RC':
             mode = mavutil.mavlink.MAV_MOUNT_MODE_RC_TARGETING
         else:
-            print("Unsupported mode %s" % args[0])
+            print(("Unsupported mode %s" % args[0]))
         self.master.mav.mount_configure_send(self.target_system,
                                              self.target_component,
                                              mode,
@@ -157,7 +157,7 @@ class GimbalModule(mp_module.MPModule):
         '''show gimbal status'''
         master = self.master
         if 'GIMBAL_REPORT' in master.messages:
-            print(master.messages['GIMBAL_REPORT'])
+            print((master.messages['GIMBAL_REPORT']))
         else:
             print("No GIMBAL_REPORT messages")
 

@@ -2,7 +2,7 @@ import os
 import sys
 import webbrowser
 
-import mmap_server
+from . import mmap_server
 
 g_module_context = None
 

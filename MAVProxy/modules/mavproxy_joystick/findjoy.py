@@ -7,7 +7,7 @@ module.  You can run it like this:
     python -m MAVProxy.modules.mavproxy_joystick.findjoy
 '''
 
-from __future__ import print_function
+
 
 import argparse
 import collections
@@ -52,7 +52,7 @@ def select_joystick():
             return
         elif choice.isdigit():
             jid = int(choice)
-            if jid not in range(pygame.joystick.get_count()):
+            if jid not in list(range(pygame.joystick.get_count())):
                 print('Invalid joystick.')
                 continue
             break

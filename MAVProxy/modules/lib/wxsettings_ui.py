@@ -1,4 +1,4 @@
-from wx_loader import wx
+from .wx_loader import wx
 
 class TabbedDialog(wx.Dialog):
     def __init__(self, tab_names, title='Title', size=wx.DefaultSize):
@@ -41,14 +41,14 @@ class TabbedDialog(wx.Dialog):
 
     def on_apply(self, event):
         '''called on apply'''
-        for label in self.setting_map.keys():
+        for label in list(self.setting_map.keys()):
             setting = self.setting_map[label]
             ctrl = self.controls[label]
             value = ctrl.GetValue()
             if str(value) != str(setting.value):
                 oldvalue = setting.value
                 if not setting.set(value):
-                    print("Invalid value %s for %s" % (value, setting.name))
+                    print(("Invalid value %s for %s" % (value, setting.name)))
                     continue
                 if str(oldvalue) != str(setting.value):
                     self.parent_pipe.send(setting)
@@ -66,11 +66,11 @@ class TabbedDialog(wx.Dialog):
         if dlg.ShowModal() == wx.ID_OK:
             self.settings.load(dlg.GetPath())
         # update the controls with new values
-        for label in self.setting_map.keys():
+        for label in list(self.setting_map.keys()):
             setting = self.setting_map[label]
             ctrl = self.controls[label]
             value = ctrl.GetValue()
-            if isinstance(value, str) or isinstance(value, unicode):
+            if isinstance(value, str) or isinstance(value, str):
                 ctrl.SetValue(str(setting.value))
             else:
                 ctrl.SetValue(setting.value)

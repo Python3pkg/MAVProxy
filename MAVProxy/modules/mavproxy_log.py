@@ -37,7 +37,7 @@ class LogModule(mp_module.MPModule):
         else:
             tstring = time.ctime(m.time_utc)
         self.entries[m.id] = m
-        print("Log %u  numLogs %u lastLog %u size %u %s" % (m.id, m.num_logs, m.last_log_num, m.size, tstring))
+        print(("Log %u  numLogs %u lastLog %u size %u %s" % (m.id, m.num_logs, m.last_log_num, m.size, tstring)))
 
 
     def handle_log_data(self, m):
@@ -64,11 +64,11 @@ class LogModule(mp_module.MPModule):
             self.download_file.close()
             size = os.path.getsize(self.download_filename)
             speed = size / (1000.0 * dt)
-            print("Finished downloading %s (%u bytes %u seconds, %.1f kbyte/sec %u retries)" % (
+            print(("Finished downloading %s (%u bytes %u seconds, %.1f kbyte/sec %u retries)" % (
                 self.download_filename,
                 size,
                 dt, speed,
-                self.retries))
+                self.retries)))
             self.download_file = None
             self.download_filename = None
             self.download_set = set()
@@ -120,12 +120,12 @@ class LogModule(mp_module.MPModule):
             size = m.size
         highest = max(self.download_set)
         diff = set(range(highest)).difference(self.download_set)
-        print("Downloading %s - %u/%u bytes %.1f kbyte/s (%u retries %u missing)" % (self.download_filename,
+        print(("Downloading %s - %u/%u bytes %.1f kbyte/s (%u retries %u missing)" % (self.download_filename,
                                                                                      os.path.getsize(self.download_filename),
                                                                                      size,
                                                                                      speed,
                                                                                      self.retries,
-                                                                                     len(diff)))
+                                                                                     len(diff))))
 
     def log_download_next(self):
         latest = self.download_queue.pop()
@@ -133,7 +133,7 @@ class LogModule(mp_module.MPModule):
         self.log_download(latest, filename)
 
     def log_download_all(self):
-        if len(self.entries.keys()) == 0:
+        if len(list(self.entries.keys())) == 0:
             print("Please use log list first")
             return
         self.download_queue = sorted(self.entries, key=lambda id: self.entries[id].time_utc)
@@ -141,7 +141,7 @@ class LogModule(mp_module.MPModule):
 
     def log_download(self, log_num, filename):
         '''download a log file'''
-        print("Downloading log %u as %s" % (log_num, filename))
+        print(("Downloading log %u as %s" % (log_num, filename)))
         self.download_lognum = log_num
         self.download_file = open(filename, "wb")
         self.master.mav.log_request_data_send(self.target_system,
@@ -194,7 +194,7 @@ class LogModule(mp_module.MPModule):
                 self.log_download_all()
                 return
             if args[1] == 'latest':
-                if len(self.entries.keys()) == 0:
+                if len(list(self.entries.keys())) == 0:
                     print("Please use log list first")
                     return
                 log_num = sorted(self.entries, key=lambda id: self.entries[id].time_utc)[-1]

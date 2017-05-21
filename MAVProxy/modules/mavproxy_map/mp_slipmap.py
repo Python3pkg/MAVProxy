@@ -221,9 +221,9 @@ if __name__ == "__main__":
             if not opts.verbose:
                 continue
             if isinstance(obj, SlipMouseEvent):
-                print("Mouse event at %s (X/Y=%u/%u) for %u objects" % (obj.latlon,
+                print(("Mouse event at %s (X/Y=%u/%u) for %u objects" % (obj.latlon,
                                                                         obj.event.X, obj.event.Y,
-                                                                        len(obj.selected)))
+                                                                        len(obj.selected))))
             if isinstance(obj, SlipKeyEvent):
-                print("Key event at %s for %u objects" % (obj.latlon, len(obj.selected)))
+                print(("Key event at %s for %u objects" % (obj.latlon, len(obj.selected))))
         time.sleep(0.1)

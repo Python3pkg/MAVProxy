@@ -226,7 +226,7 @@ class ConsoleModule(mp_module.MPModule):
                         'LOG'  : mavutil.mavlink.MAV_SYS_STATUS_LOGGING,
             }
             announce = [ 'RC' ]
-            for s in sensors.keys():
+            for s in list(sensors.keys()):
                 bits = sensors[s]
                 present = ((msg.onboard_control_sensors_present & bits) == bits)
                 enabled = ((msg.onboard_control_sensors_enabled & bits) == bits)

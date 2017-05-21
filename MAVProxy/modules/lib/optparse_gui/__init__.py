@@ -56,7 +56,7 @@ class OptparseDialog( wx.Dialog ):
                 continue
 
             if option.help is None:
-                option.help = u''
+                option.help = ''
 
             box = wx.BoxSizer(wx.HORIZONTAL)
             if 'store' == option.action:
@@ -80,7 +80,7 @@ class OptparseDialog( wx.Dialog ):
 
                     if ( option.default != optparse.NO_DEFAULT ) and \
                        ( option.default is not None ):
-                        ctrl.Value = unicode( option.default )
+                        ctrl.Value = str( option.default )
 
                 box.Add( ctrl, 1, wx.ALIGN_CENTRE|wx.ALL, 5 )
 
@@ -158,7 +158,7 @@ Args the contain spaces must be entered like so: "arg with sapce"
                                message = 'Select directory for %s' % (option.dest),
                                defaultPath = path)
         else:
-            raise NotImplementedError(`option.type`)
+            raise NotImplementedError(repr(option.type))
         dlg_result = dlg.ShowModal()
         if wx.ID_OK != dlg_result:
             return
@@ -167,7 +167,7 @@ Args the contain spaces must be entered like so: "arg with sapce"
 
     def _getOptions( self ):
         option_values = {}
-        for option, ctrl in self.option_controls.iteritems():
+        for option, ctrl in self.option_controls.items():
             option_values[option] = ctrl.Value
 
         return option_values
@@ -244,7 +244,7 @@ class OptionParser( optparse.OptionParser ):
 
         option_values, args = dlg.getOptionsAndArgs()
 
-        for option, value in option_values.iteritems():
+        for option, value in option_values.items():
             if ( 'store_true' == option.action ) and ( value is False ):
                 setattr( values, option.dest, False )
                 continue
@@ -316,8 +316,8 @@ def sample_parse_args_issue1():
 
 def main():
     options, args = sample_parse_args_issue1()
-    print 'args: %s' % repr( args )
-    print 'options: %s' % repr( options )
+    print('args: %s' % repr( args ))
+    print('options: %s' % repr( options ))
 
 if '__main__' == __name__:
     main()

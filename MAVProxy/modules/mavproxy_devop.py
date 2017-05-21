@@ -90,9 +90,9 @@ class DeviceOpModule(mp_module.MPModule):
         mtype = m.get_type()
         if mtype == "DEVICE_OP_READ_REPLY":
             if m.result != 0:
-                print("Operation %u failed: %u" % (m.request_id, m.result))
+                print(("Operation %u failed: %u" % (m.request_id, m.result)))
             else:
-                print("Operation %u OK: %u bytes" % (m.request_id, m.count))
+                print(("Operation %u OK: %u bytes" % (m.request_id, m.count)))
                 for i in range(m.count):
                     reg = i + m.regstart
                     sys.stdout.write("%02x:%02x " % (reg, m.data[i]))
@@ -103,9 +103,9 @@ class DeviceOpModule(mp_module.MPModule):
 
         if mtype == "DEVICE_OP_WRITE_REPLY":
             if m.result != 0:
-                print("Operation %u failed: %u" % (m.request_id, m.result))
+                print(("Operation %u failed: %u" % (m.request_id, m.result)))
             else:
-                print("Operation %u OK" % m.request_id)
+                print(("Operation %u OK" % m.request_id))
 
 def init(mpstate):
     '''initialise module'''

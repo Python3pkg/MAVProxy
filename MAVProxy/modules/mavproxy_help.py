@@ -2,7 +2,8 @@
     MAVProxy help/versioning module
 """
 import os, time, platform, re
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 from pymavlink import mavwp, mavutil
 from MAVProxy.modules.lib import mp_util
 from MAVProxy.modules.lib import mp_module
@@ -55,8 +56,8 @@ class HelpModule(mp_module.MPModule):
                         if self.mycmp(self.newversion, versiontag) < 0:
                             self.newversion = versiontag
         elif platform.system() == 'Linux':
-            import xmlrpclib, pip
-            pypi = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
+            import xmlrpc.client, pip
+            pypi = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
             available = pypi.package_releases('MAVProxy')
             if not available:
                 self.newversion = 'Error finding update'
@@ -64,7 +65,7 @@ class HelpModule(mp_module.MPModule):
                 self.newversion = available[0]
 
         #and format the update string
-        if not isinstance(self.newversion, basestring):
+        if not isinstance(self.newversion, str):
             self.newversion = "Error finding update"
         elif re.search('[a-zA-Z]', self.newversion):
             self.newversion = "Error finding update: " + self.newversion
@@ -100,7 +101,7 @@ class HelpModule(mp_module.MPModule):
             return
 
         if args[0] == "about":
-            print("MAVProxy Version " + self.version + "\nOS: " + self.host + "\nPython " +  self.pythonversion)
+            print(("MAVProxy Version " + self.version + "\nOS: " + self.host + "\nPython " +  self.pythonversion))
         elif args[0] == "site":
             print("See http://ardupilot.github.io/MAVProxy/ for documentation")
         else:

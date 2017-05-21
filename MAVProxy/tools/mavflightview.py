@@ -28,7 +28,7 @@ def create_imagefile(options, filename, latlon, ground_width, path_objs, mission
     map_img = mt.area_to_image(latlon[0], latlon[1],
                                width, height, ground_width)
     while mt.tiles_pending() > 0:
-        print("Waiting on %u tiles" % mt.tiles_pending())
+        print(("Waiting on %u tiles" % mt.tiles_pending()))
         time.sleep(1)
     map_img = mt.area_to_image(latlon[0], latlon[1],
                                width, height, ground_width)
@@ -75,11 +75,11 @@ colour_map_rover = {}
 colour_map_tracker = {}
 colour_map_submarine = {}
 
-for mytuple in ((mavutil.mode_mapping_apm.values(),colour_map_plane),
-                (mavutil.mode_mapping_acm.values(),colour_map_copter),
-                (mavutil.mode_mapping_rover.values(),colour_map_rover),
-                (mavutil.mode_mapping_tracker.values(),colour_map_tracker),
-                (mavutil.mode_mapping_sub.values(),colour_map_submarine),
+for mytuple in ((list(mavutil.mode_mapping_apm.values()),colour_map_plane),
+                (list(mavutil.mode_mapping_acm.values()),colour_map_copter),
+                (list(mavutil.mode_mapping_rover.values()),colour_map_rover),
+                (list(mavutil.mode_mapping_tracker.values()),colour_map_tracker),
+                (list(mavutil.mode_mapping_sub.values()),colour_map_submarine),
 ):
     (mode_names, colour_map) = mytuple
     i=0
@@ -108,7 +108,7 @@ def colourmap_for_mav_type(mav_type):
     if mav_type == mavutil.mavlink.MAV_TYPE_SUBMARINE:
         map = colour_map_submarine
     if map is None:
-        print("No colormap for mav_type=%u" % (map,))
+        print(("No colormap for mav_type=%u" % (map,)))
         # we probably don't have a valid mode map, so returning
         # anything but the empty map here is probably pointless:
         map = colour_map_plane
@@ -157,7 +157,7 @@ def colour_for_point(mlog, point, instance, options):
             colour_expression_exceptions[str_e] = 0
             count = 0
         if count > 100:
-            print("Too many exceptions processing (%s): %s" % (source, str_e))
+            print(("Too many exceptions processing (%s): %s" % (source, str_e)))
             sys.exit(1)
         colour_expression_exceptions[str_e] += 1
         v = 0
@@ -168,13 +168,13 @@ def colour_for_point(mlog, point, instance, options):
     if v is None:
         v = 0
     elif isinstance(v, str):
-        print("colour expression returned a string: %s" % v)
+        print(("colour expression returned a string: %s" % v))
         sys.exit(1)
     elif v < 0:
-        print("colour expression returned %d (< 0)" % v)
+        print(("colour expression returned %d (< 0)" % v))
         v = 0
     elif v > 255:
-        print("colour expression returned %d (> 255)" % v)
+        print(("colour expression returned %d (> 255)" % v))
         v = 255
 
     if v < colour_source_min:
@@ -195,7 +195,7 @@ def colour_for_flightmode(mav_type, fmode, instance=0):
     if fmode in colourmap:
         colour = colourmap[fmode]
     else:
-        print("No entry in colourmap for %s" % (str(fmode)))
+        print(("No entry in colourmap for %s" % (str(fmode))))
         colour = colourmap['UNKNOWN']
     (r,g,b) = colour
     (r,g,b) = (r+instance*80,g+instance*50,b+instance*70)
@@ -242,7 +242,7 @@ def mavflightview_mav(mlog, options=None, flightmode_selections=[]):
             types.extend(['NKF1', 'GPS'])
         if options.ahr2:
             types.extend(['AHR2', 'AHRS2', 'GPS'])
-    print("Looking for types %s" % str(types))
+    print(("Looking for types %s" % str(types)))
 
     last_timestamps = {}
     used_flightmodes = {}
@@ -260,7 +260,7 @@ def mavflightview_mav(mlog, options=None, flightmode_selections=[]):
         if type == 'MISSION_ITEM':
             try:
                 while m.seq > wp.count():
-                    print("Adding dummy WP %u" % wp.count())
+                    print(("Adding dummy WP %u" % wp.count()))
                     wp.set(m, wp.count())
                 wp.set(m, m.seq)
             except Exception:
@@ -277,7 +277,7 @@ def mavflightview_mav(mlog, options=None, flightmode_selections=[]):
                                                              m.Lat, m.Lng, m.Alt)
             try:
                 while m.seq > wp.count():
-                    print("Adding dummy WP %u" % wp.count())
+                    print(("Adding dummy WP %u" % wp.count()))
                     wp.set(m, wp.count())
                 wp.set(m, m.seq)
             except Exception:
@@ -428,13 +428,13 @@ def mavflightview_show(path, wp, fen, used_flightmodes, mav_type, options, title
 
     if options.colour_source == "flightmode":
         tuples = [ (mode, colour_for_flightmode(mav_type, mode))
-                   for mode in used_flightmodes.keys() ]
+                   for mode in list(used_flightmodes.keys()) ]
         map.add_object(mp_slipmap.SlipFlightModeLegend("legend", tuples))
     else:
-        print("colour-source: min=%f max=%f" % (colour_source_min, colour_source_max))
+        print(("colour-source: min=%f max=%f" % (colour_source_min, colour_source_max)))
 
 def mavflightview(filename, options):
-    print("Loading %s ..." % filename)
+    print(("Loading %s ..." % filename))
     mlog = mavutil.mavlink_connection(filename)
     stuff = mavflightview_mav(mlog, options)
     if stuff is None:

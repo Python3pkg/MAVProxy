@@ -8,7 +8,7 @@ Released under the GNU GPL version 3 or later
 
 import time, math, random
 from pymavlink import mavutil, mavwp
-from cStringIO import StringIO
+from io import StringIO
 from xml.dom.minidom import parseString
 from zipfile import ZipFile
 
@@ -60,7 +60,7 @@ class KmlReadModule(mp_module.MPModule):
             self.loadkml(args[1])
         elif args[0] == "layers":
             for layer in self.curlayers:
-                print "Found layer: " + layer
+                print("Found layer: " + layer)
         elif args[0] == "toggle":
             self.togglekml(args[1])
         elif args[0] == "fence":
@@ -114,7 +114,7 @@ class KmlReadModule(mp_module.MPModule):
             if (p.idx != p2.idx or
                 abs(p.lat - p2.lat) >= 0.00003 or
                 abs(p.lng - p2.lng) >= 0.00003):
-                print("Failed to send fence point %u" % i)
+                print(("Failed to send fence point %u" % i))
                 self.param_set('FENCE_ACTION', action, 3)
                 return False
         self.param_set('FENCE_ACTION', action, 3)

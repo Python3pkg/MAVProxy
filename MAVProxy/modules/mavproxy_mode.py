@@ -19,14 +19,14 @@ class ModeModule(mp_module.MPModule):
             print('No mode mapping available')
             return
         if len(args) != 1:
-            print('Available modes: ', mode_mapping.keys())
+            print(('Available modes: ', list(mode_mapping.keys())))
             return
         if args[0].isdigit():
             modenum = int(args[0])
         else:
             mode = args[0].upper()
             if mode not in mode_mapping:
-                print('Unknown mode %s: ' % mode)
+                print(('Unknown mode %s: ' % mode))
                 return
             modenum = mode_mapping[mode]
         self.master.set_mode(modenum)
@@ -36,7 +36,7 @@ class ModeModule(mp_module.MPModule):
         if mode_mapping is None:
             print('No mode mapping available')
             return []
-        return mode_mapping.keys()
+        return list(mode_mapping.keys())
 
     def unknown_command(self, args):
         '''handle mode switch by mode name as command'''
@@ -69,7 +69,7 @@ class ModeModule(mp_module.MPModule):
                 return
             altitude = int(args[0])
 
-        print("Guided %s %d" % (str(latlon), altitude))
+        print(("Guided %s %d" % (str(latlon), altitude)))
         self.master.mav.mission_item_send (self.settings.target_system,
                                            self.settings.target_component,
                                            0,

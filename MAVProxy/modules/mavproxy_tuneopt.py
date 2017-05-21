@@ -52,16 +52,16 @@ class TuneoptModule(mp_module.MPModule):
     def tune_show(self):
         opt_num = str(int(self.get_mav_param('TUNE')))
         option = None
-        for k in tune_options.keys():
+        for k in list(tune_options.keys()):
             if opt_num == tune_options[k]:
                 option = k
                 break
         else:
-            print("TUNE is currently set to unknown value " + opt_num)
+            print(("TUNE is currently set to unknown value " + opt_num))
             return
         low = self.get_mav_param('TUNE_LOW')
         high = self.get_mav_param('TUNE_HIGH')
-        print("TUNE is currently set to %s LOW=%f HIGH=%f" % (option, low/1000, high/1000))
+        print(("TUNE is currently set to %s LOW=%f HIGH=%f" % (option, low/1000, high/1000)))
 
     def tune_option_validate(self, option):
         for k in tune_options:
@@ -87,7 +87,7 @@ class TuneoptModule(mp_module.MPModule):
                 return
             option = self.tune_option_validate(args[1])
             if not option:
-                print('Invalid Tune option: ' + args[1])
+                print(('Invalid Tune option: ' + args[1]))
                 return
             low = args[2]
             high = args[3]
@@ -99,7 +99,7 @@ class TuneoptModule(mp_module.MPModule):
         elif args[0].lower() == 'list':
             print("Options available:")
             for s in sorted(tune_options.keys()):
-                print('  ' + s)
+                print(('  ' + s))
         else:
             print(usage)
 

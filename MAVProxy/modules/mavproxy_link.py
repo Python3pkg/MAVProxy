@@ -110,30 +110,30 @@ class LinkModule(mp_module.MPModule):
             except AttributeError as e:
                 # some mav objects may not have a "signing" attribute
                 pass
-            print("link %u %s (%u packets, %.2fs delay, %u lost, %.1f%% loss%s)" % (master.linknum+1,
+            print(("link %u %s (%u packets, %.2fs delay, %u lost, %.1f%% loss%s)" % (master.linknum+1,
                                                                                     status,
                                                                                     self.status.counters['MasterIn'][master.linknum],
                                                                                     linkdelay,
                                                                                     master.mav_loss,
                                                                                     master.packet_loss(),
-                                                                                    sign_string))
+                                                                                    sign_string)))
     def cmd_link_list(self):
         '''list links'''
-        print("%u links" % len(self.mpstate.mav_master))
+        print(("%u links" % len(self.mpstate.mav_master)))
         for i in range(len(self.mpstate.mav_master)):
             conn = self.mpstate.mav_master[i]
-            print("%u: %s" % (i, conn.address))
+            print(("%u: %s" % (i, conn.address)))
 
     def link_add(self, device):
         '''add new link'''
         try:
-            print("Connect %s source_system=%d" % (device, self.settings.source_system))
+            print(("Connect %s source_system=%d" % (device, self.settings.source_system)))
             conn = mavutil.mavlink_connection(device, autoreconnect=True,
                                               source_system=self.settings.source_system,
                                               baud=self.settings.baudrate)
             conn.mav.srcComponent = self.settings.source_component
         except Exception as msg:
-            print("Failed to connect to %s : %s" % (device, msg))
+            print(("Failed to connect to %s : %s" % (device, msg)))
             return False
         if self.settings.rtscts:
             conn.set_rtscts(True)
@@ -158,14 +158,14 @@ class LinkModule(mp_module.MPModule):
     def cmd_link_add(self, args):
         '''add new link'''
         device = args[0]
-        print("Adding link %s" % device)
+        print(("Adding link %s" % device))
         self.link_add(device)
 
     def cmd_link_ports(self):
         '''show available ports'''
         ports = mavutil.auto_detect_serial(preferred_list=['*FTDI*',"*Arduino_Mega_2560*", "*3D_Robotics*", "*USB_to_UART*", '*PX4*', '*FMU*'])
         for p in ports:
-            print("%s : %s : %s" % (p.device, p.description, p.hwid))
+            print(("%s : %s : %s" % (p.device, p.description, p.hwid)))
 
     def cmd_link_remove(self, args):
         '''remove an link'''
@@ -176,7 +176,7 @@ class LinkModule(mp_module.MPModule):
         for i in range(len(self.mpstate.mav_master)):
             conn = self.mpstate.mav_master[i]
             if str(i) == device or conn.address == device:
-                print("Removing link %s" % conn.address)
+                print(("Removing link %s" % conn.address))
                 try:
                     try:
                         mp_util.child_fd_list_remove(conn.port.fileno())
@@ -220,7 +220,7 @@ class LinkModule(mp_module.MPModule):
         msec = m.time_boot_ms
         if msec + 30000 < master.highest_msec:
             self.say('Time has wrapped')
-            print('Time has wrapped', msec, master.highest_msec)
+            print(('Time has wrapped', msec, master.highest_msec))
             self.status.highest_msec = msec
             for mm in self.mpstate.mav_master:
                 mm.link_delayed = False
@@ -251,7 +251,7 @@ class LinkModule(mp_module.MPModule):
         try:
             return severity_colors[severity]
         except Exception as e:
-            print("Exception: %s" % str(e))
+            print(("Exception: %s" % str(e)))
             return ('white', 'red')
 
     def report_altitude(self, altitude):

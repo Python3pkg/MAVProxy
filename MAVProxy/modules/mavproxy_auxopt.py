@@ -36,14 +36,14 @@ class AuxoptModule(mp_module.MPModule):
         param = "CH%s_OPT" % channel
         opt_num = str(int(self.get_mav_param(param)))
         option = None
-        for k in aux_options.keys():
+        for k in list(aux_options.keys()):
             if opt_num == aux_options[k]:
                 option = k
                 break
         else:
-            print("AUX Channel is currently set to unknown value " + opt_num)
+            print(("AUX Channel is currently set to unknown value " + opt_num))
             return
-        print("AUX Channel is currently set to " + option)
+        print(("AUX Channel is currently set to " + option))
 
     def aux_option_validate(self, option):
         for k in aux_options:
@@ -62,7 +62,7 @@ class AuxoptModule(mp_module.MPModule):
         if args[0] == 'list':
             print("Options available:")
             for s in sorted(aux_options.keys()):
-                print('  ' + s)
+                print(('  ' + s))
         elif args[0] == 'show':
             if len(args) > 2 and args[1] not in ['7', '8', 'all']:
                 print("Usage: auxopt show [7|8|all]")
@@ -88,7 +88,7 @@ class AuxoptModule(mp_module.MPModule):
                 return
             option = self.aux_option_validate(args[2])
             if not option:
-                print("Invalid option " + args[2])
+                print(("Invalid option " + args[2]))
                 return
             param = "CH%s_OPT" % args[1]
             self.param_set(param, aux_options[option])

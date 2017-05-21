@@ -77,7 +77,7 @@ class GoProModule(mp_module.MPModule):
         '''show gopro status'''
         master = self.master
         if 'GOPRO_HEARTBEAT' in master.messages:
-            print(master.messages['GOPRO_HEARTBEAT'])
+            print((master.messages['GOPRO_HEARTBEAT']))
         else:
             print("No GOPRO_HEARTBEAT messages")
 

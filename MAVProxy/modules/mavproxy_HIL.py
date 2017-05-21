@@ -60,7 +60,7 @@ class HILModule(mp_module.MPModule):
             return
         if len(pkt) != 17*8 + 4:
             # wrong size, discard it
-            print("wrong size %u" % len(pkt))
+            print(("wrong size %u" % len(pkt)))
             return
         (latitude, longitude, altitude, heading, v_north, v_east, v_down,
          ax, ay, az,

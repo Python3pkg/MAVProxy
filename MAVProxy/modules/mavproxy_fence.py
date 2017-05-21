@@ -29,7 +29,7 @@ class FenceModule(mp_module.MPModule):
             if os.path.exists(fencetxt):
                 self.fenceloader.load(fencetxt)
                 self.have_list = True
-                print("Loaded fence from %s" % fencetxt)
+                print(("Loaded fence from %s" % fencetxt))
 
         self.menu_added_console = False
         self.menu_added_map = False
@@ -112,7 +112,7 @@ class FenceModule(mp_module.MPModule):
 
         idx = int(args[0])
         if idx <= 0 or idx > self.fenceloader.count():
-            print("Invalid fence point number %u" % idx)
+            print(("Invalid fence point number %u" % idx))
             return
 
         try:
@@ -127,7 +127,7 @@ class FenceModule(mp_module.MPModule):
         # note we don't subtract 1, as first fence point is the return point
         self.fenceloader.move(idx, latlon[0], latlon[1])
         if self.send_fence():
-            print("Moved fence point %u" % idx)
+            print(("Moved fence point %u" % idx))
 
     def cmd_fence_remove(self, args):
         '''handle fencepoint remove'''
@@ -140,15 +140,15 @@ class FenceModule(mp_module.MPModule):
 
         idx = int(args[0])
         if idx <= 0 or idx > self.fenceloader.count():
-            print("Invalid fence point number %u" % idx)
+            print(("Invalid fence point number %u" % idx))
             return
 
         # note we don't subtract 1, as first fence point is the return point
         self.fenceloader.remove(idx)
         if self.send_fence():
-            print("Removed fence point %u" % idx)
+            print(("Removed fence point %u" % idx))
         else:
-            print("Failed to remove fence point %u" % idx)
+            print(("Failed to remove fence point %u" % idx))
 
     def cmd_fence(self, args):
         '''fence commands'''
@@ -200,9 +200,9 @@ class FenceModule(mp_module.MPModule):
             self.fenceloader.target_component = self.target_component
             self.fenceloader.load(filename)
         except Exception as msg:
-            print("Unable to load %s - %s" % (filename, msg))
+            print(("Unable to load %s - %s" % (filename, msg)))
             return
-        print("Loaded %u geo-fence points from %s" % (self.fenceloader.count(), filename))
+        print(("Loaded %u geo-fence points from %s" % (self.fenceloader.count(), filename)))
         self.send_fence()
 
     def send_fence(self):
@@ -224,7 +224,7 @@ class FenceModule(mp_module.MPModule):
             if (p.idx != p2.idx or
                 abs(p.lat - p2.lat) >= 0.00003 or
                 abs(p.lng - p2.lng) >= 0.00003):
-                print("Failed to send fence point %u" % i)
+                print(("Failed to send fence point %u" % i))
                 self.param_set('FENCE_ACTION', action, 3)
                 return False
         self.param_set('FENCE_ACTION', action, 3)
@@ -282,9 +282,9 @@ class FenceModule(mp_module.MPModule):
             try:
                 self.fenceloader.save(filename)
             except Exception as msg:
-                print("Unable to save %s - %s" % (filename, msg))
+                print(("Unable to save %s - %s" % (filename, msg)))
                 return
-            print("Saved %u geo-fence points to %s" % (self.fenceloader.count(), filename))
+            print(("Saved %u geo-fence points to %s" % (self.fenceloader.count(), filename)))
         else:
             for i in range(self.fenceloader.count()):
                 p = self.fenceloader.point(i)
@@ -292,7 +292,7 @@ class FenceModule(mp_module.MPModule):
         if self.status.logdir != None:
             fencetxt = os.path.join(self.status.logdir, 'fence.txt')
             self.fenceloader.save(fencetxt)
-            print("Saved fence to %s" % fencetxt)
+            print(("Saved fence to %s" % fencetxt))
         self.have_list = True
 
     def print_usage(self):

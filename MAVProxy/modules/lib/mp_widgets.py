@@ -6,7 +6,7 @@ Andrew Tridgell
 June 2012
 '''
 
-from wx_loader import wx
+from .wx_loader import wx
 import cv2
 import numpy as np
 
@@ -31,6 +31,6 @@ class ImagePanel(wx.Panel):
         elif hasattr(img, 'GetHeight'):
             self._bmp = wx.BitmapFromImage(img)
         else:
-            print("Unsupported image type: %s" % type(img))
+            print(("Unsupported image type: %s" % type(img)))
             return
         self.SetMinSize((self._bmp.GetWidth(), self._bmp.GetHeight()))

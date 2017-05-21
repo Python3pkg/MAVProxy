@@ -1,8 +1,8 @@
 '''
 Graphical editing of graph definition
 '''
-from wx_loader import wx
-from graphdefinition import GraphDefinition
+from .wx_loader import wx
+from .graphdefinition import GraphDefinition
 
 class GraphDialog(wx.Dialog):
     def __init__(self, title, graphdef, callback):

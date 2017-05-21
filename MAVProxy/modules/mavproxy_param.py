@@ -40,9 +40,9 @@ class ParamState:
             self.mav_param[str(param_id)] = m.param_value
             if self.fetch_one > 0:
                 self.fetch_one -= 1
-                print("%s = %f" % (param_id, m.param_value))
+                print(("%s = %f" % (param_id, m.param_value)))
             if added_new_parameter and len(self.mav_param_set) == m.param_count:
-                print("Received %u parameters" % m.param_count)
+                print(("Received %u parameters" % m.param_count))
                 if self.logdir != None:
                     self.mav_param.save(os.path.join(self.logdir, self.parm_file), '*', verbose=True)
                     self.fetch_set = None
@@ -92,7 +92,7 @@ class ParamState:
             return None
         path = mp_util.dot_mavproxy("%s.xml" % self.vehicle_name)
         if not os.path.exists(path):
-            print("Please run 'param download' first (vehicle_name=%s)" % self.vehicle_name)
+            print(("Please run 'param download' first (vehicle_name=%s)" % self.vehicle_name))
             return None
         xml = open(path).read()
         from lxml import objectify
@@ -120,11 +120,11 @@ class ParamState:
 
         contains = {}
         for keyword in args:
-            for param in htree.keys():
+            for param in list(htree.keys()):
                 if str(htree[param]).find(keyword) != -1:
                     contains[param] = True
-        for param in contains.keys():
-            print("%s" % (param,))
+        for param in list(contains.keys()):
+            print(("%s" % (param,)))
 
     def param_help(self, args):
         '''show help on a parameter'''
@@ -140,23 +140,23 @@ class ParamState:
             h = h.upper()
             if h in htree:
                 help = htree[h]
-                print("%s: %s\n" % (h, help.get('humanName')))
-                print(help.get('documentation'))
+                print(("%s: %s\n" % (h, help.get('humanName'))))
+                print((help.get('documentation')))
                 try:
                     print("\n")
                     for f in help.field:
-                        print("%s : %s" % (f.get('name'), str(f)))
+                        print(("%s : %s" % (f.get('name'), str(f))))
                 except Exception as e:
                     pass
                 try:
                     vchild = help.getchildren()[0]
                     print("\nValues: ")
                     for v in vchild.value:
-                        print("\t%s : %s" % (v.get('code'), str(v)))
+                        print(("\t%s : %s" % (v.get('code'), str(v))))
                 except Exception as e:
                     pass
             else:
-                print("Parameter '%s' not found in documentation" % h)
+                print(("Parameter '%s' not found in documentation" % h))
 
     def handle_command(self, master, mpstate, args):
         '''handle parameter commands'''
@@ -171,11 +171,11 @@ class ParamState:
                 self.mav_param_set = set()
                 print("Requested parameter list")
             else:
-                for p in self.mav_param.keys():
+                for p in list(self.mav_param.keys()):
                     if fnmatch.fnmatch(p, args[1].upper()):
                         master.param_fetch_one(p)
                         self.fetch_one += 1
-                        print("Requested parameter %s" % p)
+                        print(("Requested parameter %s" % p))
         elif args[0] == "save":
             if len(args) < 2:
                 print("usage: param save <filename> [wildcard]")
@@ -193,7 +193,7 @@ class ParamState:
                     return
                 filename = mp_util.dot_mavproxy("%s-defaults.parm" % self.vehicle_name)
                 if not os.path.exists(filename):
-                    print("Please run 'param download' first (vehicle_name=%s)" % self.vehicle_name)
+                    print(("Please run 'param download' first (vehicle_name=%s)" % self.vehicle_name))
                     return
                 if len(args) >= 2:
                     wildcard = args[1]
@@ -201,7 +201,7 @@ class ParamState:
                 filename = args[1]
                 if len(args) == 3:
                     wildcard = args[2]
-            print("%-16.16s %12.12s %12.12s" % ('Parameter', 'Defaults', 'Current'))
+            print(("%-16.16s %12.12s %12.12s" % ('Parameter', 'Defaults', 'Current')))
             self.mav_param.diff(filename, wildcard=wildcard)
         elif args[0] == "set":
             if len(args) < 2:
@@ -215,7 +215,7 @@ class ParamState:
             if value.startswith('0x'):
                 value = int(value, base=16)
             if not param.upper() in self.mav_param:
-                print("Unable to find parameter '%s'" % param)
+                print(("Unable to find parameter '%s'" % param))
                 return
             self.mav_param.mavset(master, param.upper(), value, retries=3)
 
@@ -261,7 +261,7 @@ class ParamState:
                 pattern = "*"
             self.mav_param.show(pattern)
         elif args[0] == "status":
-            print("Have %u/%u params" % (len(self.mav_param_set), self.mav_param_count))
+            print(("Have %u/%u params" % (len(self.mav_param_set), self.mav_param_count)))
         else:
             print(usage)
 

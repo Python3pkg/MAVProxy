@@ -17,7 +17,7 @@ Compass calibration helper. This is adapted from Ardupilot's local MAVProxy
 module magcal_graph. Some people read it "magical_graph" at the time of
 release, thus the silly reason for the name of this module.
 """
-from __future__ import print_function
+
 
 import multiprocessing
 import sys
@@ -162,9 +162,9 @@ class MagicalModule(mp_module.MPModule):
         ))
 
         if self.progress_msgs:
-            pct = min(p.completion_pct for p in self.progress_msgs.values())
+            pct = min(p.completion_pct for p in list(self.progress_msgs.values()))
             masks = [~0] * 10
-            for p in self.progress_msgs.values():
+            for p in list(self.progress_msgs.values()):
                 for i in range(10):
                     masks[i] &= p.completion_mask[i]
             visible = [bool(m & 1 << j) for m in masks for j in range(8)]

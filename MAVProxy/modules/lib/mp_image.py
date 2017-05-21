@@ -6,7 +6,7 @@ June 2012
 '''
 
 import time
-from wx_loader import wx
+from .wx_loader import wx
 import cv2
 import numpy as np
 
@@ -88,7 +88,7 @@ class MPImage():
         self.menu = None
         self.popup_menu = None
 
-        from multiprocessing_queue import makeIPCQueue
+        from .multiprocessing_queue import makeIPCQueue
         self.in_queue = makeIPCQueue()
         self.out_queue = makeIPCQueue()
 
@@ -104,7 +104,7 @@ class MPImage():
     def child_task(self):
         '''child process - this holds all the GUI elements'''
         mp_util.child_close_fds()
-        from wx_loader import wx
+        from .wx_loader import wx
         state = self
 
         self.app = wx.App(False)
@@ -531,9 +531,9 @@ if __name__ == "__main__":
             if isinstance(event, MPMenuItem):
                 print(event)
                 continue
-            print event.ClassName
+            print(event.ClassName)
             if event.ClassName == 'wxMouseEvent':
-                print 'mouse', event.X, event.Y
+                print('mouse', event.X, event.Y)
             if event.ClassName == 'wxKeyEvent':
-                print 'key %u' % event.KeyCode
+                print('key %u' % event.KeyCode)
         time.sleep(0.1)

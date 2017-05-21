@@ -1,4 +1,4 @@
-from wx_loader import wx
+from .wx_loader import wx
 
 class GraphFrame(wx.Frame):
     """ The main frame of the application

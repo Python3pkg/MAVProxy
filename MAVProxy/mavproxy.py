@@ -9,23 +9,23 @@ Released under the GNU GPL version 3 or later
 
 import sys, os, time, socket, signal
 import fnmatch, errno, threading
-import serial, Queue, select
+import serial, queue, select
 import traceback
 import select
 import shlex
 import platform
 
-from MAVProxy.modules.lib import textconsole
-from MAVProxy.modules.lib import rline
-from MAVProxy.modules.lib import mp_module
-from MAVProxy.modules.lib import dumpstacks
+from .MAVProxy.modules.lib import textconsole
+from .MAVProxy.modules.lib import rline
+from .MAVProxy.modules.lib import mp_module
+from .MAVProxy.modules.lib import dumpstacks
 
 # adding all this allows pyinstaller to build a working windows executable
 # note that using --hidden-import does not work for these modules
 try:
       from multiprocessing import freeze_support
       from pymavlink import mavwp, mavutil
-      import matplotlib, HTMLParser
+      import matplotlib, html.parser
       try:
             import readline
       except ImportError:
@@ -123,7 +123,7 @@ class MPState(object):
         self.map_functions = {}
         self.vehicle_type = None
         self.vehicle_name = None
-        from MAVProxy.modules.lib.mp_settings import MPSettings, MPSetting
+        from .MAVProxy.modules.lib.mp_settings import MPSettings, MPSetting
         self.settings = MPSettings(
             [ MPSetting('link', int, 1, 'Primary Link', tab='Link', range=(0,4), increment=1),
               MPSetting('streamrate', int, 4, 'Stream rate link1', range=(-1,100), increment=1),
@@ -264,7 +264,7 @@ def cmd_watch(args):
         mpstate.status.watch = None
         return
     mpstate.status.watch = args[0]
-    print("Watching %s" % mpstate.status.watch)
+    print(("Watching %s" % mpstate.status.watch))
 
 def load_module(modname, quiet=False):
     '''load a module'''
@@ -272,7 +272,7 @@ def load_module(modname, quiet=False):
     for (m,pm) in mpstate.modules:
         if m.name == modname:
             if not quiet:
-                print("module %s already loaded" % modname)
+                print(("module %s already loaded" % modname))
             return False
     for modpath in modpaths:
         try:
@@ -282,7 +282,7 @@ def load_module(modname, quiet=False):
             if isinstance(module, mp_module.MPModule):
                 mpstate.modules.append((module, m))
                 if not quiet:
-                    print("Loaded module %s" % (modname,))
+                    print(("Loaded module %s" % (modname,)))
                 return True
             else:
                 ex = "%s.init did not return a MPModule instance" % modname
@@ -291,8 +291,8 @@ def load_module(modname, quiet=False):
             ex = msg
             if mpstate.settings.moddebug > 1:
                 import traceback
-                print(traceback.format_exc())
-    print("Failed to load module: %s. Use 'set moddebug 3' in the MAVProxy console to enable traceback" % ex)
+                print((traceback.format_exc()))
+    print(("Failed to load module: %s. Use 'set moddebug 3' in the MAVProxy console to enable traceback" % ex))
     return False
 
 def unload_module(modname):
@@ -302,9 +302,9 @@ def unload_module(modname):
             if hasattr(m, 'unload'):
                 m.unload()
             mpstate.modules.remove((m,pm))
-            print("Unloaded module %s" % modname)
+            print(("Unloaded module %s" % modname))
             return True
-    print("Unable to find module %s" % modname)
+    print(("Unable to find module %s" % modname))
     return False
 
 def cmd_module(args):
@@ -315,7 +315,7 @@ def cmd_module(args):
         return
     if args[0] == "list":
         for (m,pm) in mpstate.modules:
-            print("%s: %s" % (m.name, m.description))
+            print(("%s: %s" % (m.name, m.description)))
     elif args[0] == "load":
         if len(args) < 2:
             print("usage: module load <name>")
@@ -331,7 +331,7 @@ def cmd_module(args):
             if m.name == modname:
                 pmodule = pm
         if pmodule is None:
-            print("Module %s not loaded" % modname)
+            print(("Module %s not loaded" % modname))
             return
         if unload_module(modname):
             import zipimport
@@ -341,7 +341,7 @@ def cmd_module(args):
                 clear_zipimport_cache()
                 reload(pmodule)
             if load_module(modname, quiet=True):
-                print("Reloaded module %s" % modname)
+                print(("Reloaded module %s" % modname))
     elif args[0] == "unload":
         if len(args) < 2:
             print("usage: module unload <name>")
@@ -362,7 +362,7 @@ def cmd_alias(args):
             wildcard = '*'
         for a in sorted(mpstate.aliases.keys()):
             if fnmatch.fnmatch(a.upper(), wildcard):
-                print("%-15s : %s" % (a, mpstate.aliases[a]))
+                print(("%-15s : %s" % (a, mpstate.aliases[a])))
     elif args[0] == "add":
         if len(args) < 3:
             print(usage)
@@ -377,7 +377,7 @@ def cmd_alias(args):
         if a in mpstate.aliases:
             mpstate.aliases.pop(a)
         else:
-            print("no alias %s" % a)
+            print(("no alias %s" % a))
     else:
         print(usage)
         return
@@ -470,11 +470,11 @@ def process_stdin(line):
         cmd = args[0]
 
     if cmd == 'help':
-        k = command_map.keys()
+        k = list(command_map.keys())
         k.sort()
         for cmd in k:
             (fn, help) = command_map[cmd]
-            print("%-15s : %s" % (cmd, help))
+            print(("%-15s : %s" % (cmd, help)))
         return
     if cmd == 'exit' and mpstate.settings.requireexit:
         mpstate.status.exit = True
@@ -487,14 +487,14 @@ def process_stdin(line):
                     if m.unknown_command(args):
                         return
                 except Exception as e:
-                    print("ERROR in command: %s" % str(e))
-        print("Unknown command '%s'" % line)
+                    print(("ERROR in command: %s" % str(e)))
+        print(("Unknown command '%s'" % line))
         return
     (fn, help) = command_map[cmd]
     try:
         fn(args[1:])
     except Exception as e:
-        print("ERROR in command %s: %s" % (args[1:], str(e)))
+        print(("ERROR in command %s: %s" % (args[1:], str(e))))
         if mpstate.settings.moddebug > 1:
             traceback.print_exc()
 
@@ -602,7 +602,7 @@ def log_paths():
     if opts.aircraft is not None:
         dirname = ""
         if opts.mission is not None:
-            print(opts.mission)
+            print((opts.mission))
             dirname += "%s/logs/%s/Mission%s" % (opts.aircraft, time.strftime("%Y-%m-%d"), opts.mission)
         else:
             dirname += "%s/logs/%s" % (opts.aircraft, time.strftime("%Y-%m-%d"))
@@ -647,8 +647,8 @@ def open_telemetry_logs(logpath_telem, logpath_telem_raw):
     try:
         mpstate.logfile = open(logpath_telem, mode=mode)
         mpstate.logfile_raw = open(logpath_telem_raw, mode=mode)
-        print("Log Directory: %s" % mpstate.status.logdir)
-        print("Telemetry log: %s" % logpath_telem)
+        print(("Log Directory: %s" % mpstate.status.logdir))
+        print(("Telemetry log: %s" % logpath_telem))
 
         #make sure there's enough free disk space for the logfile (>200Mb)
         #statvfs doesn't work in Windows
@@ -666,7 +666,7 @@ def open_telemetry_logs(logpath_telem, logpath_telem_raw):
         t.daemon = True
         t.start()
     except Exception as e:
-        print("ERROR: opening log file for writing: %s" % e)
+        print(("ERROR: opening log file for writing: %s" % e))
         mpstate.status.exit = True
         return
 
@@ -753,7 +753,7 @@ def main_loop():
         for master in mpstate.mav_master:
             send_heartbeat(master)
             if master.linknum == 0:
-                print("Waiting for heartbeat from %s" % master.address)
+                print(("Waiting for heartbeat from %s" % master.address))
                 master.wait_heartbeat()
         set_stream_rates()
 
@@ -843,7 +843,7 @@ def input_loop():
     while mpstate.status.exit != True:
         try:
             if mpstate.status.exit != True:
-                line = raw_input(mpstate.rl.prompt)
+                line = input(mpstate.rl.prompt)
         except EOFError:
             mpstate.status.exit = True
             sys.exit(1)
@@ -959,7 +959,7 @@ if __name__ == '__main__':
 
     (opts, args) = parser.parse_args()
     if len(args) != 0:
-          print("ERROR: mavproxy takes no position arguments; got (%s)" % str(args))
+          print(("ERROR: mavproxy takes no position arguments; got (%s)" % str(args)))
           sys.exit(1)
 
     # warn people about ModemManager which interferes badly with APM and Pixhawk
@@ -976,8 +976,8 @@ if __name__ == '__main__':
     if opts.version:
         import pkg_resources
         version = pkg_resources.require("mavproxy")[0].version
-        print "MAVProxy is a modular ground station using the mavlink protocol"
-        print "MAVProxy Version: " + version
+        print("MAVProxy is a modular ground station using the mavlink protocol")
+        print("MAVProxy Version: " + version)
         sys.exit(1)
 
     # global mavproxy state
@@ -986,8 +986,8 @@ if __name__ == '__main__':
     mpstate.command_map = command_map
     mpstate.continue_mode = opts.continue_mode
     # queues for logging
-    mpstate.logqueue = Queue.Queue()
-    mpstate.logqueue_raw = Queue.Queue()
+    mpstate.logqueue = queue.Queue()
+    mpstate.logqueue_raw = queue.Queue()
 
 
     if opts.speech:
@@ -999,7 +999,7 @@ if __name__ == '__main__':
         serial_list = mavutil.auto_detect_serial(preferred_list=['*FTDI*',"*Arduino_Mega_2560*", "*3D_Robotics*", "*USB_to_UART*", '*PX4*', '*FMU*'])
         print('Auto-detected serial ports are:')
         for port in serial_list:
-              print("%s" % port)
+              print(("%s" % port))
 
     # container for status information
     mpstate.settings.target_system = opts.TARGET_SYSTEM
@@ -1012,7 +1012,7 @@ if __name__ == '__main__':
     def quit_handler(signum = None, frame = None):
         #print 'Signal handler called with signal', signum
         if mpstate.status.exit:
-            print 'Clean shutdown impossible, forcing an exit'
+            print('Clean shutdown impossible, forcing an exit')
             sys.exit(0)
         else:
             mpstate.status.exit = True
@@ -1041,7 +1041,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
     if not opts.master and len(serial_list) == 1:
-          print("Connecting to %s" % serial_list[0])
+          print(("Connecting to %s" % serial_list[0]))
           mpstate.module('link').link_add(serial_list[0].device)
     elif not opts.master:
           wifi_device = '0.0.0.0:14550'
@@ -1065,7 +1065,7 @@ if __name__ == '__main__':
     heartbeat_period = mavutil.periodic_event(1)
     heartbeat_check_period = mavutil.periodic_event(0.33)
 
-    mpstate.input_queue = Queue.Queue()
+    mpstate.input_queue = queue.Queue()
     mpstate.input_count = 0
     mpstate.empty_input_count = 0
     if opts.setup:
@@ -1104,7 +1104,7 @@ if __name__ == '__main__':
         start_scripts.append(start_script)
     for start_script in start_scripts:
         if os.path.exists(start_script):
-            print("Running script (%s)" % (start_script))
+            print(("Running script (%s)" % (start_script)))
             run_script(start_script)
 
     if opts.aircraft is not None:
@@ -1112,7 +1112,7 @@ if __name__ == '__main__':
         if os.path.exists(start_script):
             run_script(start_script)
         else:
-            print("no script %s" % start_script)
+            print(("no script %s" % start_script))
 
     if opts.cmd is not None:
         for cstr in opts.cmd:
@@ -1166,7 +1166,7 @@ if __name__ == '__main__':
     #this loop executes after leaving the above loop and is for cleanup on exit
     for (m,pm) in mpstate.modules:
         if hasattr(m, 'unload'):
-            print("Unloading module %s" % m.name)
+            print(("Unloading module %s" % m.name))
             m.unload()
 
     sys.exit(1)

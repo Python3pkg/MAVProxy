@@ -23,7 +23,7 @@ class AntennaModule(mp_module.MPModule):
             if self.gcs_location is None:
                 print("GCS location not set")
             else:
-                print("GCS location %s" % str(self.gcs_location))
+                print(("GCS location %s" % str(self.gcs_location)))
             return
         self.gcs_location = (float(args[0]), float(args[1]))
 

@@ -1,22 +1,22 @@
-import BaseHTTPServer
+import http.server
 import json
 import os.path
-import thread
-import urlparse
+import _thread
+import urllib.parse
 
 DOC_DIR = os.path.join(os.path.dirname(__file__), 'mmap_app')
 
 
-class Server(BaseHTTPServer.HTTPServer):
+class Server(http.server.HTTPServer):
   def __init__(self, handler, address='', port=9999, module_state=None):
-    BaseHTTPServer.HTTPServer.__init__(self, (address, port), handler)
+    http.server.HTTPServer.__init__(self, (address, port), handler)
     self.allow_reuse_address = True
     self.module_state = module_state
 
 
-class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+class Handler(http.server.BaseHTTPRequestHandler):
   def do_GET(self):
-    scheme, host, path, params, query, frag = urlparse.urlparse(self.path)
+    scheme, host, path, params, query, frag = urllib.parse.urlparse(self.path)
     if path == '/data':
       state = self.server.module_state
       data = {'lat': state.lat,
@@ -45,7 +45,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         if name == "__main__":
           name = "MAVProxy.modules.mavproxy_mmap.????"
         content = pkg_resources.resource_stream(name, "mmap_app/%s" % path).read()
-      except IOError, e:
+      except IOError as e:
         error = str(e)
       if content:
         self.send_response(200)
@@ -60,5 +60,5 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 def start_server(address, port, module_state):
   server = Server(
     Handler, address=address, port=port, module_state=module_state)
-  thread.start_new_thread(server.serve_forever, ())
+  _thread.start_new_thread(server.serve_forever, ())
   return server

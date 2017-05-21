@@ -53,7 +53,7 @@ class MPSetting:
                     value = v
                     break
             if not found:
-                print("Must be one of %s" % str(self.choice))
+                print(("Must be one of %s" % str(self.choice)))
                 return False
         self.value = value
         return True
@@ -123,7 +123,7 @@ class MPSettings(object):
         setting = self._vars[name]
         oldvalue = setting.value
         if not setting.set(value):
-            print("Unable to convert %s to type %s" % (value, setting.type))
+            print(("Unable to convert %s to type %s" % (value, setting.type)))
             return False
         if oldvalue != setting.value:
             self._last_change = time.time()
@@ -140,7 +140,7 @@ class MPSettings(object):
 
     def show(self, v):
         '''show settings'''
-        print("%20s %s" % (v, getattr(self, v)))
+        print(("%20s %s" % (v, getattr(self, v))))
 
     def show_all(self):
         '''show all settings'''
@@ -161,7 +161,7 @@ class MPSettings(object):
             self.show_all()
             return
         if getattr(self, args[0], [None]) == [None]:
-            print("Unknown setting '%s'" % args[0])
+            print(("Unknown setting '%s'" % args[0]))
             return
         if len(args) == 1:
             self.show(args[0])

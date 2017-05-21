@@ -37,11 +37,11 @@ class BatteryModule(mp_module.MPModule):
 
     def cmd_bat(self, args):
         '''show battery levels'''
-        print("Flight battery:   %u%%" % self.battery_level)
+        print(("Flight battery:   %u%%" % self.battery_level))
         if self.settings.numcells != 0:
-            print("%.2f V/cell for %u cells - approx %u%%" % (self.per_cell,
+            print(("%.2f V/cell for %u cells - approx %u%%" % (self.per_cell,
                                                               self.settings.numcells,
-                                                              self.vcell_to_battery_percent(self.per_cell)))
+                                                              self.vcell_to_battery_percent(self.per_cell))))
 
     def battery_report(self):
         batt_mon = int(self.get_mav_param('BATT_MONITOR',0))

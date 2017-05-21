@@ -62,14 +62,14 @@ class ADSBModule(mp_module.MPModule):
             print(usage)
             return
         if args[0] == "status":
-            print("total threat count: %u  active threat count: %u" %
-                  (len(self.threat_vehicles), len(self.active_threat_ids)))
+            print(("total threat count: %u  active threat count: %u" %
+                  (len(self.threat_vehicles), len(self.active_threat_ids))))
 
-            for id in self.threat_vehicles.keys():
-                print("id: %s  distance: %.2f m callsign: %s  alt: %.2f" % (id,
+            for id in list(self.threat_vehicles.keys()):
+                print(("id: %s  distance: %.2f m callsign: %s  alt: %.2f" % (id,
                                                                             self.threat_vehicles[id].distance,
                                                                             self.threat_vehicles[id].state['callsign'],
-                                                                            self.threat_vehicles[id].state['altitude']))
+                                                                            self.threat_vehicles[id].state['altitude'])))
         elif args[0] == "set":
             self.ADSB_settings.command(args[1:])
         else:
@@ -81,7 +81,7 @@ class ADSBModule(mp_module.MPModule):
         threat_radius_clear = self.ADSB_settings.threat_radius * \
             self.ADSB_settings.threat_radius_clear_multiplier
 
-        for id in self.threat_vehicles.keys():
+        for id in list(self.threat_vehicles.keys()):
             if self.threat_vehicles[id].distance is not None:
                 if self.threat_vehicles[id].distance <= self.ADSB_settings.threat_radius and not self.threat_vehicles[id].is_evading_threat:
                     # if the threat is in the threat radius and not currently
@@ -95,12 +95,12 @@ class ADSBModule(mp_module.MPModule):
                     # clear flag to action threat
                     self.threat_vehicles[id].is_evading_threat = False
 
-        self.active_threat_ids = [id for id in self.threat_vehicles.keys(
-        ) if self.threat_vehicles[id].is_evading_threat]
+        self.active_threat_ids = [id for id in list(self.threat_vehicles.keys(
+        )) if self.threat_vehicles[id].is_evading_threat]
 
     def update_threat_distances(self, latlonalt):
         '''update the distance between threats and vehicle'''
-        for id in self.threat_vehicles.keys():
+        for id in list(self.threat_vehicles.keys()):
             threat_latlonalt = (self.threat_vehicles[id].state['lat'] * 1e-7,
                                 self.threat_vehicles[id].state['lon'] * 1e-7,
                                 self.threat_vehicles[id].state['altitude'])
@@ -139,7 +139,7 @@ class ADSBModule(mp_module.MPModule):
     def check_threat_timeout(self):
         '''check and handle threat time out'''
         current_time = time.time()
-        for id in self.threat_vehicles.keys():
+        for id in list(self.threat_vehicles.keys()):
             if current_time - self.threat_vehicles[id].update_time > self.ADSB_settings.timeout:
                 # if the threat has timed out...
                 del self.threat_vehicles[id]  # remove the threat from the dict
@@ -156,7 +156,7 @@ class ADSBModule(mp_module.MPModule):
         if m.get_type() == "ADSB_VEHICLE":
 
             id = 'ADSB-' + str(m.ICAO_address)
-            if id not in self.threat_vehicles.keys():  # check to see if the vehicle is in the dict
+            if id not in list(self.threat_vehicles.keys()):  # check to see if the vehicle is in the dict
                 # if not then add it
                 self.threat_vehicles[id] = ADSBVehicle(id=id, state=m.to_dict())
                 if self.mpstate.map:  # if the map is loaded...
